@@ -1,65 +1,131 @@
-<img src="https://user-images.githubusercontent.com/1721988/234579578-398aab55-9336-4a20-aa62-319cf1bf4a99.png" height="80" width="auto">
+# 🚀 TechNova Chat Widget - Solution Sécurisée
 
-<h1>Web Chat Widget</h1>
+Chat widget IA personnalisé pour WordPress avec intégration OpenWebUI sécurisée.
 
-Easily add a chat bubble to your website with a single `script` tag. A simple and responsive chat widget built with HTML, CSS, and JavaScript. The chat widget is styled using Tailwind CSS (v2). [The blog post](https://anantparmar.com/blog/how-i-built-a-chat-widget-with-chatgpt-under-an-hour) describing how I did it.
+## ✨ **Caractéristiques**
 
-## Built with ChatGPT (GPT-4)
+- 🔐 **Sécurité maximale** : Clé API jamais exposée côté frontend
+- 🎨 **Design moderne** : Interface responsive avec Tailwind CSS
+- ⚡ **Installation rapide** : 2 lignes de code dans WordPress
+- 🔧 **Configuration automatique** : Backend génère la config dynamiquement
+- 🌐 **Compatible** : Fonctionne avec tous les thèmes WordPress
+- 📱 **Responsive** : S'adapte mobile et desktop
 
-About 95% of the code for this widget is written by GPT-4, I just edited and adjust a few things
-
-
-<br>
-
-<p align="left">
-<img src="https://user-images.githubusercontent.com/1721988/234564883-685d7e3f-8640-4d4d-8b42-3b7be18b59dc.gif"  height="320" width="auto">
-<img src="https://user-images.githubusercontent.com/1721988/234564904-e7f02e30-cc7c-40db-9a2a-e123510f1283.gif"  height="320" width="600">
-</p>
-
-## Features
-
-- No external dependencies, pure javascript
-- Responsive design
-- Smooth animations and transitions
-- Easily customizable
-- Lightweight and dependency-free
-
-## TODO
-
-- Replace Tailwind with a custom CSS file
-- Session Persistance
-- Ajax mechanism to send and receive messages
-
-## Installation
-
-To install the chat widget, follow these steps:
-
-1. Copy the `chat-widget.js` file into your project directory.
-
-2. Add the following script tag to the `<head>` section of your HTML document:
+## 🏗️ **Architecture**
 
 ```
-<script async src="./chat-widget.js"></script>
+WordPress Frontend ←→ Backend Node.js ←→ OpenWebUI
+     ↓                      ↓               ↓
+  2 lignes code       Clé API sécurisée   Modèle IA
 ```
 
-## Usage & Customization
+## 🚀 **Installation Rapide**
 
-- The code is quite straight forward and easy to follow, you can easily modify it to suit your needs.
+### 1. Déployer le Backend
 
-- Messages are passed to the `onUserRequest` function, where you can handle user requests and provide appropriate replies. Use the `reply` function to display responses in the chat popup.
+[![Deploy to Coolify](https://img.shields.io/badge/Deploy-Coolify-blue)](https://coolify.io)
 
-- For visual customization, you can directly make changes to the css or you can also replace the Tailwind CSS classes with your own custom CSS classes or inline styles.
+1. Connecter ce repository à Coolify
+2. Configurer les variables d'environnement :
+   ```
+   OPENWEBUI_API_KEY=votre_cle_api
+   OPENWEBUI_URL=http://localhost:3000
+   FRONTEND_URL=https://votre-site.com
+   ```
+3. Déployer
 
-## Demo
+### 2. Intégrer dans WordPress
 
-Here's a live demo of the chat widget:
+Ajoutez dans votre `footer.php` WordPress :
 
-[Chat Widget Demo](https://anantrp.github.io/chat-widget)
+```html
+<script src="https://votre-backend.coolify.app/config.js"></script>
+<script src="https://votre-backend.coolify.app/widget.js"></script>
+```
 
-## Contributing
+**C'est tout !** Le chat widget apparaît automatiquement.
 
-Contributions are welcome! If you find a bug, have a feature request, or want to improve the chat widget, please feel free to open an issue or create a pull request.
+## 📁 **Structure du Projet**
 
-## License
+```
+├── backend/                          # Backend Node.js sécurisé
+│   ├── server.js                     # Serveur Express
+│   ├── package.json                  # Dépendances
+│   └── .env.example                  # Variables d'environnement
+├── technova-chat-widget-production.js # Widget frontend
+├── technova-config-production.js     # Configuration
+├── demo-technova-production.html     # Page de démonstration
+├── WORDPRESS_INTEGRATION.md          # Guide intégration WordPress
+└── README.md                         # Ce fichier
+```
 
-This project is open-source and available under the [MIT License](https://choosealicense.com/licenses/mit/).
+## 🔧 **Configuration**
+
+### Variables d'environnement (Backend)
+
+```bash
+OPENWEBUI_API_KEY=your_api_key_here
+OPENWEBUI_URL=http://localhost:3000
+PORT=3001
+FRONTEND_URL=https://your-wordpress-site.com
+NODE_ENV=production
+```
+
+### Configuration du Widget
+
+Le backend génère automatiquement la configuration optimale. Personnalisable via CSS.
+
+## 🎨 **Personnalisation**
+
+```css
+/* Personnaliser la position */
+#technova-chat-widget-container {
+    bottom: 20px !important;
+    right: 20px !important;
+}
+
+/* Personnaliser les couleurs */
+#technova-chat-bubble {
+    background: linear-gradient(135deg, #your-color1, #your-color2) !important;
+}
+```
+
+## 🛡️ **Sécurité**
+
+- ✅ Clé API jamais exposée côté frontend
+- ✅ Backend proxy sécurisé
+- ✅ CORS configuré correctement
+- ✅ Variables d'environnement protégées
+- ✅ Headers de sécurité
+
+## 📚 **Documentation**
+
+- [Guide d'intégration WordPress](WORDPRESS_INTEGRATION.md)
+- [Notes de sécurisation](notes/SECURISATION_API_KEY_PRODUCTION.md)
+- [Guide de déploiement](notes/GUIDE_DEPLOIEMENT_PRODUCTION.md)
+
+## 🚀 **Démo**
+
+Ouvrez `demo-technova-production.html` pour voir le widget en action.
+
+## 🔗 **Endpoints Backend**
+
+- `GET /health` - Status du backend
+- `POST /api/chat` - Proxy vers OpenWebUI
+- `GET /api/models` - Liste des modèles
+- `GET /widget.js` - Widget JavaScript
+- `GET /config.js` - Configuration dynamique
+
+## 🆘 **Support**
+
+1. Vérifiez que le backend est en ligne : `/health`
+2. Consultez les logs du navigateur (F12)
+3. Vérifiez la configuration CORS
+
+## 📄 **Licence**
+
+MIT License - Libre d'utilisation pour vos projets.
+
+---
+
+**TechNova Chat Widget** - Solution sécurisée pour intégrer un chat IA dans WordPress.

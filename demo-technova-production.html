@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechNova Assistant - Version Production Sécurisée</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        .header {
+            margin-bottom: 60px;
+        }
+        
+        .logo {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            color: #fff;
+        }
+        
+        .subtitle {
+            font-size: 20px;
+            opacity: 0.9;
+            margin-bottom: 32px;
+        }
+        
+        .security-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 32px;
+        }
+        
+        .status-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 32px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 40px;
+        }
+        
+        .status-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #fff;
+        }
+        
+        .status-indicator {
+            font-size: 18px;
+            padding: 12px 24px;
+            border-radius: 50px;
+            margin: 10px;
+            display: inline-block;
+        }
+        
+        .status-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10B981;
+            border: 1px solid #10B981;
+        }
+        
+        .status-error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+            border: 1px solid #EF4444;
+        }
+        
+        .status-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: #F59E0B;
+            border: 1px solid #F59E0B;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            margin-bottom: 60px;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 32px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        
+        .feature-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #fff;
+        }
+        
+        .feature-description {
+            font-size: 16px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .cta-section {
+            margin-top: 60px;
+        }
+        
+        .cta-text {
+            font-size: 24px;
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.4);
+        }
+        
+        .cta-button:disabled {
+            background: #6B7280;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .backend-info {
+            margin-top: 40px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: left;
+        }
+        
+        .backend-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #BFDBFE;
+        }
+        
+        .backend-status {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #E5E7EB;
+            white-space: pre-wrap;
+            margin-bottom: 16px;
+        }
+        
+        .backend-check {
+            background: #1F2937;
+            color: #E5E7EB;
+            border: 1px solid #374151;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .backend-check:hover {
+            background: #374151;
+        }
+        
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 36px;
+            }
+            
+            .subtitle {
+                font-size: 18px;
+            }
+            
+            .cta-text {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🚀 TechNova</div>
+            <div class="subtitle">Assistant IA personnalisé pour votre entreprise</div>
+            <div class="security-badge">🔐 Version Production Sécurisée</div>
+            <div class="subtitle">Clé API protégée côté backend</div>
+        </div>
+        
+        <div class="status-card">
+            <div class="status-title">🔍 Status de connexion backend</div>
+            <div id="backend-status" class="status-indicator status-warning">
+                ⏳ Vérification en cours...
+            </div>
+            <div id="security-status" class="status-indicator status-success">
+                ✅ Sécurité: Aucune clé API exposée
+            </div>
+        </div>
+        
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">🔐</div>
+                <div class="feature-title">Sécurité Maximum</div>
+                <div class="feature-description">
+                    Aucune clé API exposée côté frontend. Toutes les requêtes passent par votre backend sécurisé.
+                </div>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🏗️</div>
+                <div class="feature-title">Architecture Backend</div>
+                <div class="feature-description">
+                    Serveur proxy Node.js qui cache votre clé API et gère les appels à OpenWebUI de manière sécurisée.
+                </div>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">☁️</div>
+                <div class="feature-title">Prêt pour Production</div>
+                <div class="feature-description">
+                    Déployable sur Heroku, Vercel, ou tout hébergeur cloud avec gestion des variables d'environnement.
+                </div>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <div class="feature-title">Monitoring Intégré</div>
+                <div class="feature-description">
+                    Logs détaillés, gestion d'erreurs avancée et endpoints de santé pour surveiller votre service.
+                </div>
+            </div>
+        </div>
+        
+        <div class="cta-section">
+            <div class="cta-text">Testez votre assistant TechNova sécurisé !</div>
+            <button id="chat-button" class="cta-button" onclick="toggleChat()" disabled>
+                🔌 Backend requis pour le test
+            </button>
+        </div>
+        
+        <div class="backend-info">
+            <div class="backend-title">🛠️ Informations Backend</div>
+            <div id="backend-logs" class="backend-status">
+Vérification de la connexion backend...
+            </div>
+            
+            <button class="backend-check" onclick="checkBackend()">Vérifier Backend</button>
+            <button class="backend-check" onclick="checkHealth()">Test Santé</button>
+            <button class="backend-check" onclick="clearLogs()">Clear Logs</button>
+        </div>
+    </div>
+
+    <!-- Chargement de la configuration SÉCURISÉE -->
+    <script src="technova-config-production.js"></script>
+    
+    <!-- Chargement du widget SÉCURISÉ -->
+    <script src="technova-chat-widget-production.js"></script>
+    
+    <script>
+        // Variables globales pour le diagnostic
+        let backendLogs = [];
+        let backendConnected = false;
+        
+        // Fonction pour basculer l'état du chat
+        function toggleChat() {
+            if (!backendConnected) {
+                addBackendLog('❌ Backend non connecté - impossible d\'ouvrir le chat');
+                return;
+            }
+            
+            const chatBubble = document.getElementById('technova-chat-bubble');
+            if (chatBubble) {
+                chatBubble.click();
+            } else {
+                addBackendLog('❌ Chat widget non chargé');
+            }
+        }
+        
+        // Fonction pour ajouter des logs backend
+        function addBackendLog(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logMessage = `[${timestamp}] ${message}`;
+            backendLogs.push(logMessage);
+            
+            // Garder seulement les 15 derniers logs
+            if (backendLogs.length > 15) {
+                backendLogs.shift();
+            }
+            
+            updateBackendDisplay();
+            console.log(logMessage);
+        }
+        
+        // Mettre à jour l'affichage des logs backend
+        function updateBackendDisplay() {
+            const backendInfo = document.getElementById('backend-logs');
+            backendInfo.textContent = backendLogs.join('\n');
+        }
+        
+        // Vérifier la connexion backend
+        async function checkBackend() {
+            addBackendLog('🧪 Vérification connexion backend...');
+            
+            if (!window.TECHNOVA_CONFIG) {
+                addBackendLog('❌ Configuration non chargée');
+                updateBackendStatus(false);
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${window.TECHNOVA_CONFIG.openWebUIUrl}${window.TECHNOVA_CONFIG.modelsEndpoint}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                        // ✅ Aucune clé API côté frontend !
+                    }
+                });
+                
+                addBackendLog(`📊 Status backend: ${response.status}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addBackendLog(`✅ Backend connecté - Modèles disponibles`);
+                    updateBackendStatus(true);
+                    enableChatButton();
+                } else {
+                    const errorText = await response.text();
+                    addBackendLog(`❌ Erreur backend: ${response.status} - ${errorText.substring(0, 100)}`);
+                    updateBackendStatus(false);
+                }
+            } catch (error) {
+                addBackendLog(`❌ Erreur connexion backend: ${error.message}`);
+                updateBackendStatus(false);
+            }
+        }
+        
+        // Test de santé du backend
+        async function checkHealth() {
+            addBackendLog('💓 Test de santé backend...');
+            
+            if (!window.TECHNOVA_CONFIG?.healthEndpoint) {
+                addBackendLog('⚠️ Endpoint de santé non configuré');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${window.TECHNOVA_CONFIG.openWebUIUrl}${window.TECHNOVA_CONFIG.healthEndpoint}`);
+                
+                if (response.ok) {
+                    const health = await response.json();
+                    addBackendLog(`✅ Backend en bonne santé: ${JSON.stringify(health).substring(0, 100)}...`);
+                } else {
+                    addBackendLog(`❌ Backend en mauvaise santé: ${response.status}`);
+                }
+            } catch (error) {
+                addBackendLog(`❌ Erreur test santé: ${error.message}`);
+            }
+        }
+        
+        // Effacer les logs
+        function clearLogs() {
+            backendLogs = [];
+            updateBackendDisplay();
+            addBackendLog('🧹 Logs effacés');
+        }
+        
+        // Mettre à jour le statut backend
+        function updateBackendStatus(isConnected) {
+            backendConnected = isConnected;
+            const backendStatus = document.getElementById('backend-status');
+            
+            if (isConnected) {
+                backendStatus.textContent = '✅ Backend connecté';
+                backendStatus.className = 'status-indicator status-success';
+            } else {
+                backendStatus.textContent = '❌ Backend déconnecté';
+                backendStatus.className = 'status-indicator status-error';
+            }
+        }
+        
+        // Activer le bouton de chat
+        function enableChatButton() {
+            const chatButton = document.getElementById('chat-button');
+            chatButton.disabled = false;
+            chatButton.textContent = 'Ouvrir le Chat Assistant';
+            chatButton.onclick = toggleChat;
+        }
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            addBackendLog('🚀 Version Production initialisée');
+            addBackendLog('🔐 Sécurité: Aucune clé API exposée côté frontend');
+            
+            // Attendre le chargement de la configuration
+            setTimeout(() => {
+                if (window.TECHNOVA_CONFIG) {
+                    addBackendLog(`⚙️ Configuration backend: ${window.TECHNOVA_CONFIG.openWebUIUrl}`);
+                    addBackendLog(`🎯 Endpoints: ${window.TECHNOVA_CONFIG.chatEndpoint}, ${window.TECHNOVA_CONFIG.modelsEndpoint}`);
+                } else {
+                    addBackendLog('❌ Configuration non chargée');
+                }
+            }, 500);
+            
+            // Test automatique après 2 secondes
+            setTimeout(() => {
+                checkBackend();
+            }, 2000);
+        });
+        
+        // Écouter les erreurs
+        window.addEventListener('error', function(event) {
+            addBackendLog(`🔥 Erreur JS: ${event.error?.message || event.message}`);
+        });
+        
+        addBackendLog('✅ Système de diagnostic backend initialisé');
+    </script>
+</body>
+</html>
