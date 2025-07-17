@@ -14,14 +14,23 @@ const TECHNOVA_CONFIG = {
   healthEndpoint: '/health',           // ✅ Endpoint de santé
   // parametre model token model
   // msg ER per
-  // Configuration du modèle
-
-  model: 'technova',
+  // ==========================================
+  // CONFIGURATION MODÈLE - MAINTENANT DYNAMIQUE
+  // ==========================================
+  // ❌ ANCIEN CODE STATIQUE (commenté) - PROBLÈME: Valeur fixe, ne s'adapte pas au modèle choisi
+  // model: 'technova',  // Était toujours fixe à 'technova'
+  
+  // ✅ NOUVEAU CODE DYNAMIQUE - SOLUTION: Sera défini automatiquement par loadModelConfig()
+  model: null, // Sera mis à jour dynamiquement selon le modèle choisi dans OpenWebUI
   maxTokens: 1500,
   temperature: 0.7,
   
 
-  // Message système personnalisé pour TechNova
+  // ==========================================
+  // MESSAGE SYSTÈME - MAINTENANT DYNAMIQUE
+  // ==========================================
+  // ❌ ANCIEN CODE STATIQUE (commenté) - PROBLÈME: Message fixe pour tous les modèles
+  /*
   systemMessage: `Tu es TechNova Assistant, un assistant intelligent spécialisé dans l'aide aux utilisateurs pour la compagnie TechNova, créée en 2017 à Paris. 
 
 Tu as accès à une base de connaissances interne complète sur :
@@ -39,6 +48,10 @@ INSTRUCTIONS IMPORTANTES :
 6. Si une question dépasse tes connaissances, indique poliment que tu n'as pas assez d'informations
 
 Tu es idéal pour les clients, employés, ou toute personne cherchant à comprendre rapidement l'univers TechNova.`,
+  */
+  
+  // ✅ NOUVEAU CODE DYNAMIQUE - SOLUTION: Sera généré automatiquement selon le modèle
+  systemMessage: null, // Sera mis à jour dynamiquement selon le modèle choisi
   
   // Paramètres spécifiques pour TechNova
   stream: false,
@@ -54,7 +67,11 @@ Tu es idéal pour les clients, employés, ou toute personne cherchant à compren
     authError: 'Erreur d\'authentification du service. Veuillez contacter l\'administrateur.'
   },
   
-  // Questions prédéfinies spécifiques à TechNova
+  // ==========================================
+  // QUESTIONS PRÉDÉFINIES - MAINTENANT DYNAMIQUES
+  // ==========================================
+  // ❌ ANCIEN CODE STATIQUE (commenté) - PROBLÈME: Questions fixes pour tous les modèles
+  /*
   predefinedQuestions: [
     {
       question: "Qu'est-ce que TechNova ?",
@@ -73,6 +90,144 @@ Tu es idéal pour les clients, employés, ou toute personne cherchant à compren
       answer: "TechNova a été créée en 2017 et est basée à Paris, France. Nous servons des clients dans toute l'Europe avec nos solutions digitales."
     }
   ]
+  */
+  
+  // ✅ NOUVEAU CODE DYNAMIQUE - SOLUTION: Sera généré automatiquement selon le modèle
+  predefinedQuestions: null, // Sera mis à jour dynamiquement selon le modèle choisi
+  
+  // ==========================================
+  // NOUVELLES VARIABLES DYNAMIQUES
+  // ==========================================
+  // ✅ AJOUT: Variables pour stocker la configuration dynamique
+  assistantName: null,    // Nom de l'assistant (ex: "TechNova Assistant", "GPT-4 Assistant")
+  description: null,      // Description personnalisée selon le modèle
+  currentModel: null,     // Modèle actuellement utilisé
+  lastUpdate: null        // Timestamp de la dernière mise à jour
+};
+
+// ==========================================
+// NOUVELLES FONCTIONS DYNAMIQUES
+// ==========================================
+
+// ✅ FONCTION PRINCIPALE: Charge la configuration d'un modèle spécifique
+// 🎯 OBJECTIF: Remplace les valeurs statiques par des valeurs adaptées au modèle
+// 📝 UTILISATION: loadModelConfig('gpt-4') pour charger la config GPT-4
+async function loadModelConfig(modelName) {
+  try {
+    console.log(`🔄 Chargement de la configuration pour le modèle: ${modelName}`);
+    
+    // ✅ Appel au backend pour récupérer la configuration dynamique
+    const response = await fetch(`${TECHNOVA_CONFIG.openWebUIUrl}/api/model-info/${modelName}`);
+    
+    if (!response.ok) {
+      throw new Error(`Erreur récupération config: ${response.status}`);
+    }
+    
+    const modelConfig = await response.json();
+    
+    // ✅ Mise à jour de la configuration avec les nouvelles valeurs
+    updateTechnovaConfig(modelConfig);
+    
+    console.log(`✅ Configuration mise à jour pour ${modelName}`);
+    return modelConfig;
+    
+  } catch (error) {
+    console.error(`❌ Erreur chargement config pour ${modelName}:`, error);
+    
+    // ✅ Fallback: Configuration par défaut si erreur
+    const fallbackConfig = {
+      model: modelName,
+      assistantName: `${modelName} Assistant`,
+      description: `Bonjour ! Je suis ${modelName}, votre assistant IA.`,
+      quickQuestions: [
+        { icon: '❓', text: 'Que peux-tu faire ?', question: 'Que peux-tu faire ?' },
+        { icon: '💡', text: 'Aide-moi', question: 'Comment peux-tu m\'aider ?' }
+      ],
+      systemMessage: `Tu es ${modelName}, un assistant IA. Réponds de manière utile et précise.`
+    };
+    
+    updateTechnovaConfig(fallbackConfig);
+    return fallbackConfig;
+  }
+}
+
+// ✅ FONCTION: Met à jour la configuration globale avec les nouvelles valeurs
+// 🎯 OBJECTIF: Applique les changements à l'objet TECHNOVA_CONFIG
+function updateTechnovaConfig(newConfig) {
+  // ✅ Mise à jour des valeurs principales
+  TECHNOVA_CONFIG.model = newConfig.model;
+  TECHNOVA_CONFIG.assistantName = newConfig.assistantName;
+  TECHNOVA_CONFIG.description = newConfig.description;
+  TECHNOVA_CONFIG.predefinedQuestions = newConfig.quickQuestions;
+  TECHNOVA_CONFIG.systemMessage = newConfig.systemMessage;
+  TECHNOVA_CONFIG.currentModel = newConfig.model;
+  TECHNOVA_CONFIG.lastUpdate = new Date().toISOString();
+  
+  console.log('📊 Configuration globale mise à jour:', {
+    model: TECHNOVA_CONFIG.model,
+    assistantName: TECHNOVA_CONFIG.assistantName,
+    questionsCount: TECHNOVA_CONFIG.predefinedQuestions?.length || 0
+  });
+}
+
+// ✅ FONCTION: Détecte automatiquement le modèle par défaut
+// 🎯 OBJECTIF: Trouve le premier modèle disponible si aucun n'est spécifié
+async function detectDefaultModel() {
+  try {
+    console.log('🔍 Détection du modèle par défaut...');
+    
+    // ✅ Récupération de la liste des modèles disponibles
+    const response = await fetch(`${TECHNOVA_CONFIG.openWebUIUrl}${TECHNOVA_CONFIG.modelsEndpoint}`);
+    
+    if (!response.ok) {
+      throw new Error(`Erreur récupération modèles: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    // ✅ Recherche du premier modèle disponible
+    let models = [];
+    if (Array.isArray(data)) {
+      models = data;
+    } else if (data.models && Array.isArray(data.models)) {
+      models = data.models;
+    } else if (data.data && Array.isArray(data.data)) {
+      models = data.data;
+    }
+    
+    if (models.length > 0) {
+      const defaultModel = models[0].id || models[0].name || models[0].model;
+      console.log(`✅ Modèle par défaut détecté: ${defaultModel}`);
+      return defaultModel;
+    }
+    
+    throw new Error('Aucun modèle disponible');
+    
+  } catch (error) {
+    console.error('❌ Erreur détection modèle par défaut:', error);
+    return 'technova'; // Fallback
+  }
+}
+
+// ✅ FONCTION: Initialise la configuration dynamique
+// 🎯 OBJECTIF: Charge automatiquement la configuration au démarrage
+async function initializeDynamicConfig(preferredModel = null) {
+  try {
+    console.log('🚀 Initialisation de la configuration dynamique...');
+    
+    // ✅ Détermine le modèle à utiliser
+    const modelToUse = preferredModel || await detectDefaultModel();
+    
+    // ✅ Charge la configuration pour ce modèle
+    await loadModelConfig(modelToUse);
+    
+    console.log('✅ Configuration dynamique initialisée');
+    return true;
+    
+  } catch (error) {
+    console.error('❌ Erreur initialisation config dynamique:', error);
+    return false;
+  }
 };
 
 // Fonction pour valider la configuration Technova SÉCURISÉE
@@ -160,13 +315,70 @@ async function testTechnovaConnection() {
   }
 }
 
+// ==========================================
+// EXPORTS AMÉLIORÉS - INCLUT LES NOUVELLES FONCTIONS
+// ==========================================
 // Export pour utilisation dans d'autres fichiers
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { TECHNOVA_CONFIG, validateTechnovaConfig, testTechnovaConnection };
+  module.exports = { 
+    TECHNOVA_CONFIG, 
+    validateTechnovaConfig, 
+    testTechnovaConnection,
+    // ✅ NOUVELLES FONCTIONS DYNAMIQUES
+    loadModelConfig,
+    updateTechnovaConfig,
+    detectDefaultModel,
+    initializeDynamicConfig
+  };
 }
 
-// Définir la variable globale pour le navigateur - SÉCURISÉE
+// Définir les variables globales pour le navigateur - SÉCURISÉES
 if (typeof window !== 'undefined') {
   window.TECHNOVA_CONFIG = TECHNOVA_CONFIG;
+  
+  // ✅ AJOUT: Exposer les nouvelles fonctions globalement
+  window.loadModelConfig = loadModelConfig;
+  window.updateTechnovaConfig = updateTechnovaConfig;
+  window.detectDefaultModel = detectDefaultModel;
+  window.initializeDynamicConfig = initializeDynamicConfig;
+  
   console.log('✅ Configuration TechNova SÉCURISÉE chargée (sans clé API exposée)');
+  console.log('✅ Nouvelles fonctions dynamiques disponibles globalement');
+  
+  // 🚀 ACTIVATION AUTOMATIQUE: Initialiser le système dynamique au chargement
+  console.log('🔄 Initialisation automatique du système dynamique...');
+  
+  // ✅ SOLUTION: Attendre que le DOM soit prêt puis initialiser
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('📄 DOM chargé, initialisation du système dynamique...');
+      initializeDynamicConfig('cyberaide').then(success => {
+        if (success) {
+          console.log('✅ Système dynamique initialisé avec succès');
+          // 🎯 DÉCLENCHEUR: Notifier les autres composants que la config est prête
+          window.dispatchEvent(new CustomEvent('technovaConfigReady', {
+            detail: { config: TECHNOVA_CONFIG }
+          }));
+        } else {
+          console.warn('⚠️ Échec initialisation système dynamique, utilisation config par défaut');
+        }
+      });
+    });
+  } else {
+    // DOM déjà chargé, initialiser immédiatement
+    console.log('📄 DOM déjà chargé, initialisation immédiate...');
+    setTimeout(() => {
+      initializeDynamicConfig('cyberaide').then(success => {
+        if (success) {
+          console.log('✅ Système dynamique initialisé avec succès');
+          // 🎯 DÉCLENCHEUR: Notifier les autres composants que la config est prête
+          window.dispatchEvent(new CustomEvent('technovaConfigReady', {
+            detail: { config: TECHNOVA_CONFIG }
+          }));
+        } else {
+          console.warn('⚠️ Échec initialisation système dynamique, utilisation config par défaut');
+        }
+      });
+    }, 100); // Petit délai pour s'assurer que tout est chargé
+  }
 }

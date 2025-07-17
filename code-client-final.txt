@@ -1,0 +1,70 @@
+=====================================
+🚀 CODE D'INTÉGRATION TECHNOVA CHAT
+=====================================
+
+Bonjour,
+
+Voici le code d'intégration ultra-simple pour votre chat widget TechNova.
+
+📦 CODE À COLLER DANS VOTRE WORDPRESS :
+=====================================
+
+<script src="https://votre-backend.coolify.app/widget-embed.js"></script>
+
+⚠️ IMPORTANT : Remplacez "votre-backend.coolify.app" par votre vraie URL Coolify !
+
+📍 OÙ COLLER CE CODE :
+=====================
+
+MÉTHODE 1 - ADMIN WORDPRESS (Recommandée) :
+- Allez dans Apparence → Personnaliser → Code HTML/CSS
+- Collez le code dans la section Footer
+- Cliquez sur "Publier"
+
+MÉTHODE 2 - BLOC GUTENBERG :
+- Éditez une page ou article
+- Ajoutez un bloc "HTML Personnalisé"
+- Collez le code dans ce bloc
+- Publiez
+
+MÉTHODE 3 - PLUGIN "INSERT HEADERS AND FOOTERS" :
+- Installez le plugin "Insert Headers and Footers"
+- Allez dans Réglages → Insert Headers and Footers
+- Collez le code dans "Scripts in Footer"
+- Sauvegardez
+
+✅ RÉSULTAT :
+============
+
+Après avoir collé ce code, vous verrez :
+- Un bouton chat bleu en bas à droite de votre site
+- En cliquant dessus, une fenêtre de chat s'ouvrira
+- Le chat sera fonctionnel immédiatement
+
+🎨 PERSONNALISATION (OPTIONNEL) :
+===============================
+
+Si vous voulez personnaliser (couleur, position, etc.), remplacez le code par :
+
+<script>
+window.TechnovaConfig = {
+    model: 'technova',
+    theme: 'blue',           // blue, green, purple, orange
+    position: 'bottom-right', // bottom-right, bottom-left, top-right, top-left
+    language: 'fr'
+};
+</script>
+<script src="https://votre-backend.coolify.app/widget-embed.js"></script>
+
+🔧 SUPPORT :
+============
+
+Si vous avez des problèmes :
+1. Vérifiez que l'URL du backend est correcte
+2. Assurez-vous que le code est dans le bon endroit
+3. Testez sur un autre navigateur
+4. Contactez-nous si nécessaire
+
+C'est tout ! Votre chat widget TechNova sera fonctionnel immédiatement.
+
+=====================================

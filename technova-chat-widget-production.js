@@ -99,7 +99,11 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
           </svg>
-          <h3 class="m-0 text-lg font-semibold">TechNova Assistant</h3>
+          <!-- ❌ ANCIEN CODE STATIQUE (commenté) - PROBLÈME: Nom fixe "TechNova Assistant" -->
+          <!-- <h3 class="m-0 text-lg font-semibold">TechNova Assistant</h3> -->
+          
+          <!-- ✅ NOUVEAU CODE DYNAMIQUE - SOLUTION: Nom mis à jour selon le modèle -->
+          <h3 id="dynamic-assistant-name" class="m-0 text-lg font-semibold">Assistant</h3>
         </div>
         <button id="technova-close-popup" class="bg-transparent border-none text-white cursor-pointer hover:bg-blue-700 rounded p-1">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -111,15 +115,29 @@
       <div id="technova-welcome-message" class="p-4 bg-blue-50 border-b border-blue-200">
         <div class="flex items-center space-x-2 mb-2">
           <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-            <span class="text-white font-bold text-sm">TN</span>
+            <!-- ❌ ANCIEN CODE STATIQUE (commenté) - PROBLÈME: Icône fixe "TN" -->
+            <!-- <span class="text-white font-bold text-sm">TN</span> -->
+            
+            <!-- ✅ NOUVEAU CODE DYNAMIQUE - SOLUTION: Icône adaptée au modèle -->
+            <span id="dynamic-assistant-icon" class="text-white font-bold text-sm">AI</span>
           </div>
-          <div class="text-sm font-medium text-blue-800">Assistant TechNova</div>
+          <!-- ❌ ANCIEN CODE STATIQUE (commenté) - PROBLÈME: Titre fixe "Assistant TechNova" -->
+          <!-- <div class="text-sm font-medium text-blue-800">Assistant TechNova</div> -->
+          
+          <!-- ✅ NOUVEAU CODE DYNAMIQUE - SOLUTION: Titre adapté au modèle -->
+          <div id="dynamic-assistant-title" class="text-sm font-medium text-blue-800">Assistant</div>
         </div>
-        <p class="text-xs text-blue-700">Bonjour ! Je suis votre assistant TechNova. Je peux vous aider avec nos produits (NovaCRM, NovaDesk, NovaMail) et répondre à vos questions sur notre entreprise.</p>
+        <!-- ❌ ANCIEN CODE STATIQUE (commenté) - PROBLÈME: Description fixe TechNova -->
+        <!-- <p class="text-xs text-blue-700">Bonjour ! Je suis votre assistant TechNova. Je peux vous aider avec nos produits (NovaCRM, NovaDesk, NovaMail) et répondre à vos questions sur notre entreprise.</p> -->
+        
+        <!-- ✅ NOUVEAU CODE DYNAMIQUE - SOLUTION: Description adaptée au modèle -->
+        <p id="dynamic-assistant-description" class="text-xs text-blue-700">Initialisation en cours...</p>
       </div>
       
       <div id="technova-quick-questions" class="technova-quick-questions p-3 border-b">
         <p class="text-xs font-medium text-gray-600 mb-2">Questions rapides :</p>
+        <!-- ❌ ANCIEN CODE STATIQUE (commenté) - PROBLÈME: Questions fixes TechNova -->
+        <!-- 
         <div class="grid grid-cols-1 gap-2">
           <button class="technova-quick-question-btn text-xs p-2 rounded text-left" data-question="Qu'est-ce que TechNova ?">
             🏢 Qu'est-ce que TechNova ?
@@ -129,6 +147,14 @@
           </button>
           <button class="technova-quick-question-btn text-xs p-2 rounded text-left" data-question="Comment contacter TechNova ?">
             📞 Comment contacter TechNova ?
+          </button>
+        </div>
+        -->
+        
+        <!-- ✅ NOUVEAU CODE DYNAMIQUE - SOLUTION: Questions générées automatiquement -->
+        <div id="dynamic-quick-questions-container" class="grid grid-cols-1 gap-2">
+          <button class="technova-quick-question-btn text-xs p-2 rounded text-left" data-question="Chargement...">
+            ⏳ Chargement des questions...
           </button>
         </div>
       </div>
@@ -166,7 +192,7 @@
     apiKey: '', // ✅ Pas de clé API côté frontend !
     chatEndpoint: '/api/chat',
     modelsEndpoint: '/api/models',
-    model: 'technova',
+    model: 'cyberAide',
     maxTokens: 1500,
     temperature: 0.7,
     systemMessage: 'Tu es TechNova Assistant, spécialisé dans l\'aide aux utilisateurs pour la compagnie TechNova.',
@@ -355,7 +381,7 @@
     messageElement.innerHTML = `
       <div class="flex items-start space-x-2 max-w-[75%]">
         <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-          <span class="text-white font-bold text-xs">TN</span>
+          <span class="text-white font-bold text-xs">IA</span>
         </div>
         <div class="technova-message-assistant rounded-lg py-2 px-4 shadow-sm">
           ${escapeHtml(message)}
@@ -373,7 +399,7 @@
     typingElement.innerHTML = `
       <div class="flex items-start space-x-2 max-w-[75%]">
         <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-          <span class="text-white font-bold text-xs">TN</span>
+          <span class="text-white font-bold text-xs">IA</span>
         </div>
         <div class="technova-typing-indicator rounded-lg py-2 px-4 shadow-sm">
           <div class="flex space-x-1">
@@ -471,7 +497,224 @@
     }
   }
 
-  // Initialisation SÉCURISÉE
+  // ==========================================
+  // NOUVELLES FONCTIONS DYNAMIQUES DU WIDGET
+  // ==========================================
+
+  // ✅ FONCTION: Met à jour l'interface utilisateur avec la configuration dynamique
+  // 🎯 OBJECTIF: Remplace les éléments statiques par les valeurs du modèle actuel
+  function updateWidgetUI(modelConfig) {
+    try {
+      console.log('🔄 Mise à jour de l\'interface utilisateur...');
+      
+      // ✅ Mise à jour du nom de l'assistant dans l'en-tête
+      const assistantNameEl = document.getElementById('dynamic-assistant-name');
+      if (assistantNameEl && modelConfig.assistantName) {
+        assistantNameEl.textContent = modelConfig.assistantName;
+        console.log('✅ Nom assistant mis à jour:', modelConfig.assistantName);
+      }
+      
+      // ✅ Mise à jour de l'icône de l'assistant
+      const assistantIconEl = document.getElementById('dynamic-assistant-icon');
+      if (assistantIconEl) {
+        const iconMap = {
+          'technova': 'TN',
+          'gpt-4': 'G4',
+          'gpt-3.5-turbo': 'G3',
+          'claude': 'CL',
+          'llama': 'LL',
+          'mistral': 'MI',
+          'gemini': 'GM'
+        };
+        const icon = iconMap[modelConfig.model] || 'IA';
+        assistantIconEl.textContent = icon;
+        console.log('✅ Icône assistant mis à jour:', icon);
+      }
+      
+      // ✅ Mise à jour du titre de l'assistant
+      const assistantTitleEl = document.getElementById('dynamic-assistant-title');
+      if (assistantTitleEl && modelConfig.assistantName) {
+        assistantTitleEl.textContent = modelConfig.assistantName;
+        console.log('✅ Titre assistant mis à jour:', modelConfig.assistantName);
+      }
+      
+      // ✅ Mise à jour de la description
+      const assistantDescEl = document.getElementById('dynamic-assistant-description');
+      if (assistantDescEl && modelConfig.description) {
+        assistantDescEl.textContent = modelConfig.description;
+        console.log('✅ Description assistant mise à jour');
+      }
+      
+      // ✅ Mise à jour des questions rapides
+      updateQuickQuestions(modelConfig.quickQuestions);
+      
+      // ✅ Mise à jour du placeholder de l'input
+      const chatInputEl = document.getElementById('technova-chat-input');
+      if (chatInputEl) {
+        const placeholderMap = {
+          'technova': 'Posez votre question sur TechNova...',
+          'gpt-4': 'Posez votre question à GPT-4...',
+          'gpt-3.5-turbo': 'Posez votre question à GPT-3.5...',
+          'claude': 'Posez votre question à Claude...',
+          'llama': 'Posez votre question à Llama...',
+          'mistral': 'Posez votre question à Mistral...',
+          'gemini': 'Posez votre question à Gemini...'
+        };
+        const placeholder = placeholderMap[modelConfig.model] || `Posez votre question à ${modelConfig.model}...`;
+        chatInputEl.placeholder = placeholder;
+        console.log('✅ Placeholder input mis à jour:', placeholder);
+      }
+      
+      console.log('✅ Interface utilisateur mise à jour avec succès');
+      
+    } catch (error) {
+      console.error('❌ Erreur mise à jour interface:', error);
+    }
+  }
+
+  // ✅ FONCTION: Met à jour les questions rapides dynamiquement
+  // 🎯 OBJECTIF: Remplace les questions statiques par celles adaptées au modèle
+  function updateQuickQuestions(quickQuestions) {
+    try {
+      const container = document.getElementById('dynamic-quick-questions-container');
+      if (!container) return;
+      
+      console.log('🔄 Mise à jour des questions rapides...');
+      
+      // ✅ Vider le conteneur
+      container.innerHTML = '';
+      
+      // ✅ Ajouter les nouvelles questions
+      if (quickQuestions && quickQuestions.length > 0) {
+        quickQuestions.forEach(q => {
+          const button = document.createElement('button');
+          button.className = 'technova-quick-question-btn text-xs p-2 rounded text-left';
+          button.setAttribute('data-question', q.question);
+          button.textContent = `${q.icon} ${q.text}`;
+          
+          // ✅ Ajouter le gestionnaire d'événement
+          button.addEventListener('click', function() {
+            const question = this.dataset.question;
+            chatInput.value = question;
+            handleUserMessage();
+          });
+          
+          container.appendChild(button);
+        });
+        
+        console.log('✅ Questions rapides mises à jour:', quickQuestions.length);
+      } else {
+        // ✅ Fallback si pas de questions
+        const button = document.createElement('button');
+        button.className = 'technova-quick-question-btn text-xs p-2 rounded text-left';
+        button.setAttribute('data-question', 'Comment puis-je vous aider ?');
+        button.textContent = '❓ Comment puis-je vous aider ?';
+        
+        button.addEventListener('click', function() {
+          const question = this.dataset.question;
+          chatInput.value = question;
+          handleUserMessage();
+        });
+        
+        container.appendChild(button);
+        console.log('✅ Question rapide par défaut ajoutée');
+      }
+      
+    } catch (error) {
+      console.error('❌ Erreur mise à jour questions rapides:', error);
+    }
+  }
+
+  // ✅ FONCTION: Initialise le widget avec la configuration dynamique
+  // 🎯 OBJECTIF: Charge automatiquement la configuration au démarrage du widget
+  async function initializeWidget() {
+    try {
+      console.log('🚀 Initialisation du widget dynamique...');
+      
+      // ✅ Vérifier si les fonctions dynamiques sont disponibles
+      if (typeof window.initializeDynamicConfig === 'function') {
+        console.log('✅ Fonctions dynamiques disponibles');
+        
+        // ✅ Initialiser la configuration dynamique
+        const success = await window.initializeDynamicConfig();
+        
+        if (success) {
+          console.log('✅ Configuration dynamique initialisée');
+          
+          // ✅ Mettre à jour l'interface avec la nouvelle configuration
+          const currentConfig = {
+            model: CONFIG.model,
+            assistantName: CONFIG.assistantName,
+            description: CONFIG.description,
+            quickQuestions: CONFIG.predefinedQuestions
+          };
+          
+          updateWidgetUI(currentConfig);
+          
+          // ✅ Mettre à jour l'historique des messages avec le nouveau système
+          messageHistory = [];
+          if (CONFIG.systemMessage) {
+            messageHistory.push({ role: 'system', content: CONFIG.systemMessage });
+          }
+          
+          console.log('✅ Widget initialisé avec la configuration dynamique');
+        } else {
+          console.log('⚠️ Fallback: Configuration statique utilisée');
+        }
+      } else {
+        console.log('⚠️ Fonctions dynamiques non disponibles - utilisation configuration statique');
+      }
+      
+    } catch (error) {
+      console.error('❌ Erreur initialisation widget dynamique:', error);
+      console.log('⚠️ Fallback: Configuration statique utilisée');
+    }
+  }
+
+  // ✅ FONCTION: Permet de changer de modèle dynamiquement
+  // 🎯 OBJECTIF: Facilite le changement de modèle sans recharger la page
+  async function switchModel(modelName) {
+    try {
+      console.log(`🔄 Changement vers le modèle: ${modelName}`);
+      
+      // ✅ Vérifier si les fonctions dynamiques sont disponibles
+      if (typeof window.loadModelConfig === 'function') {
+        // ✅ Charger la nouvelle configuration
+        const newConfig = await window.loadModelConfig(modelName);
+        
+        // ✅ Mettre à jour l'interface
+        updateWidgetUI(newConfig);
+        
+        // ✅ Réinitialiser l'historique des messages
+        messageHistory = [];
+        if (CONFIG.systemMessage) {
+          messageHistory.push({ role: 'system', content: CONFIG.systemMessage });
+        }
+        
+        console.log(`✅ Modèle changé vers: ${modelName}`);
+        return true;
+      } else {
+        console.error('❌ Fonctions dynamiques non disponibles');
+        return false;
+      }
+      
+    } catch (error) {
+      console.error(`❌ Erreur changement modèle vers ${modelName}:`, error);
+      return false;
+    }
+  }
+
+  // ✅ EXPOSITION DES FONCTIONS GLOBALEMENT
+  // 🎯 OBJECTIF: Permet l'utilisation des fonctions depuis l'extérieur
+  if (typeof window !== 'undefined') {
+    window.updateWidgetUI = updateWidgetUI;
+    window.switchModel = switchModel;
+    window.initializeWidget = initializeWidget;
+  }
+
+  // ==========================================
+  // INITIALISATION AMÉLIORÉE - MAINTENANT DYNAMIQUE
+  // ==========================================
   console.log('✅ TechNova Chat Widget SÉCURISÉ initialisé (Production)');
   console.log('🔐 Sécurité: Aucune clé API exposée côté frontend');
   console.log('🔧 Configuration backend:', {
@@ -480,13 +723,60 @@
     modelsEndpoint: CONFIG.modelsEndpoint
   });
   
-  // Test de connexion au démarrage
-  testTechnovaConnection().then(result => {
-    if (result) {
-      console.log('🎉 Test de connexion backend sécurisé réussi !');
-    } else {
-      console.log('⚠️ Test de connexion backend échoué - vérifiez le backend');
+  // ✅ NOUVEAU: Écouter l'événement de configuration prête
+  console.log('🔄 Attente de la configuration dynamique...');
+  
+  // ✅ SOLUTION: Écouter l'événement technovaConfigReady
+  window.addEventListener('technovaConfigReady', function(event) {
+    console.log('🎉 Configuration dynamique reçue !', event.detail.config);
+    
+    // ✅ Mettre à jour l'interface avec la nouvelle configuration
+    const modelConfig = {
+      model: event.detail.config.model,
+      assistantName: event.detail.config.assistantName,
+      description: event.detail.config.description,
+      quickQuestions: event.detail.config.predefinedQuestions
+    };
+    
+    updateWidgetUI(modelConfig);
+    
+    // ✅ Mettre à jour l'historique des messages avec le nouveau système
+    messageHistory = [];
+    if (event.detail.config.systemMessage) {
+      messageHistory.push({ role: 'system', content: event.detail.config.systemMessage });
     }
+    
+    console.log('✅ Widget mis à jour avec la configuration dynamique');
+    
+    // ✅ Test de connexion après configuration
+    testTechnovaConnection().then(result => {
+      if (result) {
+        console.log('🎉 Test de connexion backend sécurisé réussi !');
+      } else {
+        console.log('⚠️ Test de connexion backend échoué - vérifiez le backend');
+      }
+    });
   });
   
-})(); 
+  // ✅ FALLBACK: Si la configuration n'est pas prête après 3 secondes
+  setTimeout(() => {
+    if (!window.TECHNOVA_CONFIG || !window.TECHNOVA_CONFIG.model) {
+      console.log('⚠️ Configuration dynamique non reçue - initialisation par défaut');
+      initializeWidget().then(() => {
+        console.log('✅ Widget initialisé avec configuration par défaut');
+      });
+    }
+  }, 3000);
+  
+  // ✅ MANUEL: Fonction pour forcer l'initialisation si nécessaire
+  function forceInitialization() {
+    console.log('🔄 Initialisation forcée du widget...');
+    initializeWidget().then(() => {
+      console.log('✅ Widget forcé initialisé');
+    });
+  }
+  
+  // ✅ Exposer la fonction globalement
+  window.forceInitialization = forceInitialization;
+  
+})();
