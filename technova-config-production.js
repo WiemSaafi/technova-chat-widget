@@ -115,17 +115,17 @@ Tu es idéal pour les clients, employés, ou toute personne cherchant à compren
 async function loadModelConfig(modelName) {
   try {
     console.log(`🔄 Chargement de la configuration pour le modèle: ${modelName}`);
-    
+    // 1️⃣ APPEL RÉSEAU : Contact le backend
     // ✅ Appel au backend pour récupérer la configuration dynamique
     const response = await fetch(`${TECHNOVA_CONFIG.openWebUIUrl}/api/model-info/${modelName}`);
     
     if (!response.ok) {
       throw new Error(`Erreur récupération config: ${response.status}`);
     }
-    
+    // 2️⃣ RÉCUPÉRATION : Des données du modèle
     const modelConfig = await response.json();
     
-    // ✅ Mise à jour de la configuration avec les nouvelles valeurs
+    // 3️⃣ APPEL SUIVANT : Mise à jour de la configuration
     updateTechnovaConfig(modelConfig);
     
     console.log(`✅ Configuration mise à jour pour ${modelName}`);
@@ -155,12 +155,19 @@ async function loadModelConfig(modelName) {
 // 🎯 OBJECTIF: Applique les changements à l'objet TECHNOVA_CONFIG
 function updateTechnovaConfig(newConfig) {
   // ✅ Mise à jour des valeurs principales
+  // ✅ MODIFICATION 1: Change le modèle
   TECHNOVA_CONFIG.model = newConfig.model;
+  // ✅ MODIFICATION 2: Change le nom de l'assistant
   TECHNOVA_CONFIG.assistantName = newConfig.assistantName;
+  // ✅ MODIFICATION 3: Change la description
   TECHNOVA_CONFIG.description = newConfig.description;
+  // ✅ MODIFICATION 4: Change les questions rapides
   TECHNOVA_CONFIG.predefinedQuestions = newConfig.quickQuestions;
+  // ✅ MODIFICATION 5: Change le message système (instructions IA)
   TECHNOVA_CONFIG.systemMessage = newConfig.systemMessage;
+    // ✅ MODIFICATION 6: Stocke le modèle actuel
   TECHNOVA_CONFIG.currentModel = newConfig.model;
+  // ✅ MODIFICATION 7: Timestamp de mise à jour
   TECHNOVA_CONFIG.lastUpdate = new Date().toISOString();
   
   console.log('📊 Configuration globale mise à jour:', {
@@ -352,10 +359,11 @@ if (typeof window !== 'undefined') {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() {
       console.log('📄 DOM chargé, initialisation du système dynamique...');
-      initializeDynamicConfig('cyberaide').then(success => {
+      initializeDynamicConfig('webfrontaide').then(success => {
         if (success) {
           console.log('✅ Système dynamique initialisé avec succès');
-          // 🎯 DÉCLENCHEUR: Notifier les autres composants que la config est prête
+          // Le déclenchement de la mise à jour visuelle
+//🎯 DÉCLENCHEUR: Notifier les autres composants que la config est prête
           window.dispatchEvent(new CustomEvent('technovaConfigReady', {
             detail: { config: TECHNOVA_CONFIG }
           }));
@@ -368,7 +376,7 @@ if (typeof window !== 'undefined') {
     // DOM déjà chargé, initialiser immédiatement
     console.log('📄 DOM déjà chargé, initialisation immédiate...');
     setTimeout(() => {
-      initializeDynamicConfig('cyberaide').then(success => {
+      initializeDynamicConfig('webfrontaide').then(success => {
         if (success) {
           console.log('✅ Système dynamique initialisé avec succès');
           // 🎯 DÉCLENCHEUR: Notifier les autres composants que la config est prête

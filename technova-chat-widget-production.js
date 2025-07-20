@@ -502,7 +502,8 @@
   // ==========================================
 
   // ✅ FONCTION: Met à jour l'interface utilisateur avec la configuration dynamique
-  // 🎯 OBJECTIF: Remplace les éléments statiques par les valeurs du modèle actuel
+  // 🎯 6 La mise à jour de l'interface utilisateur
+//OBJECTIF: Remplace les éléments statiques par les valeurs du modèle actuel
   function updateWidgetUI(modelConfig) {
     try {
       console.log('🔄 Mise à jour de l\'interface utilisateur...');
@@ -571,6 +572,8 @@
       console.error('❌ Erreur mise à jour interface:', error);
     }
   }
+  
+//ÉTAPE 7: La mise à jour des questions rapides
 
   // ✅ FONCTION: Met à jour les questions rapides dynamiquement
   // 🎯 OBJECTIF: Remplace les questions statiques par celles adaptées au modèle
@@ -737,7 +740,7 @@
       description: event.detail.config.description,
       quickQuestions: event.detail.config.predefinedQuestions
     };
-    
+     // 🔄 APPEL SUIVANT: Mise à jour de l'interface
     updateWidgetUI(modelConfig);
     
     // ✅ Mettre à jour l'historique des messages avec le nouveau système
