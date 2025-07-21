@@ -502,8 +502,7 @@
   // ==========================================
 
   // ✅ FONCTION: Met à jour l'interface utilisateur avec la configuration dynamique
-  // 🎯 6 La mise à jour de l'interface utilisateur
-//OBJECTIF: Remplace les éléments statiques par les valeurs du modèle actuel
+  // 🎯 OBJECTIF: Remplace les éléments statiques par les valeurs du modèle actuel
   function updateWidgetUI(modelConfig) {
     try {
       console.log('🔄 Mise à jour de l\'interface utilisateur...');
@@ -573,8 +572,6 @@
     }
   }
   
-//ÉTAPE 7: La mise à jour des questions rapides
-
   // ✅ FONCTION: Met à jour les questions rapides dynamiquement
   // 🎯 OBJECTIF: Remplace les questions statiques par celles adaptées au modèle
   function updateQuickQuestions(quickQuestions) {
