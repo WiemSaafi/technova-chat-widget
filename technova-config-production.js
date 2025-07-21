@@ -3,7 +3,7 @@
 
 const TECHNOVA_CONFIG = {
   // URL de VOTRE backend (pas OpenWebUI directement)
-  openWebUIUrl: 'http://localhost:3001', // ✅ Pour test local (changez pour production)
+  openWebUIUrl: 'https://gkwww04kwcwc00gockw8ocw4.jstr.fr', // ✅ URL de production Coolify
   
   // ✅ AUCUNE clé API côté frontend - SÉCURISÉ !
   apiKey: '', 

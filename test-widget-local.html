@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Chat Widget Local</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success { background: #d4edda; border-left: 4px solid #28a745; }
+        .error { background: #f8d7da; border-left: 4px solid #dc3545; }
+        .info { background: #d1ecf1; border-left: 4px solid #17a2b8; }
+        
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Test du Chat Widget TechNova</h1>
+        
+        <div class="info">
+            <strong>Test 1:</strong> Vérification que les fichiers se chargent correctement
+        </div>
+
+        <div id="status-widget-embed" class="status">
+            ⏳ Test de widget-embed.js...
+        </div>
+
+        <div id="status-config" class="status">
+            ⏳ Test de technova-config-production.js...
+        </div>
+
+        <div id="status-chat-widget" class="status">
+            ⏳ Test de technova-chat-widget-production.js...
+        </div>
+
+        <div class="info">
+            <strong>Test 2:</strong> Interface de chat intégrée
+        </div>
+
+        <iframe src="https://gkwww04kwcwc00gockw8ocw4.jstr.fr/widget-chat" 
+                title="Chat Widget Test"></iframe>
+        
+        <div class="info">
+            <strong>Test 3:</strong> Widget embed complet
+        </div>
+        
+        <!-- Configuration pour le widget -->
+        <script>
+            window.TechnovaConfig = {
+                backendUrl: 'https://gkwww04kwcwc00gockw8ocw4.jstr.fr',
+                model: 'technova',
+                theme: 'blue',
+                position: 'bottom-right',
+                language: 'fr',
+                showWelcome: true,
+                autoOpen: false
+            };
+        </script>
+
+        <!-- Test de chargement des fichiers -->
+        <script>
+            // Test 1: widget-embed.js
+            fetch('https://gkwww04kwcwc00gockw8ocw4.jstr.fr/widget-embed.js')
+                .then(response => {
+                    const statusDiv = document.getElementById('status-widget-embed');
+                    if (response.ok) {
+                        statusDiv.className = 'status success';
+                        statusDiv.innerHTML = '✅ widget-embed.js chargé avec succès';
+                    } else {
+                        statusDiv.className = 'status error';
+                        statusDiv.innerHTML = `❌ Erreur ${response.status}: ${response.statusText}`;
+                    }
+                })
+                .catch(error => {
+                    const statusDiv = document.getElementById('status-widget-embed');
+                    statusDiv.className = 'status error';
+                    statusDiv.innerHTML = `❌ Erreur réseau: ${error.message}`;
+                });
+
+            // Test 2: technova-config-production.js
+            fetch('https://gkwww04kwcwc00gockw8ocw4.jstr.fr/technova-config-production.js')
+                .then(response => {
+                    const statusDiv = document.getElementById('status-config');
+                    if (response.ok) {
+                        statusDiv.className = 'status success';
+                        statusDiv.innerHTML = '✅ technova-config-production.js chargé avec succès';
+                    } else {
+                        statusDiv.className = 'status error';
+                        statusDiv.innerHTML = `❌ Erreur ${response.status}: ${response.statusText}`;
+                    }
+                })
+                .catch(error => {
+                    const statusDiv = document.getElementById('status-config');
+                    statusDiv.className = 'status error';
+                    statusDiv.innerHTML = `❌ Erreur réseau: ${error.message}`;
+                });
+
+            // Test 3: technova-chat-widget-production.js
+            fetch('https://gkwww04kwcwc00gockw8ocw4.jstr.fr/technova-chat-widget-production.js')
+                .then(response => {
+                    const statusDiv = document.getElementById('status-chat-widget');
+                    if (response.ok) {
+                        statusDiv.className = 'status success';
+                        statusDiv.innerHTML = '✅ technova-chat-widget-production.js chargé avec succès';
+                    } else {
+                        statusDiv.className = 'status error';
+                        statusDiv.innerHTML = `❌ Erreur ${response.status}: ${response.statusText}`;
+                    }
+                })
+                .catch(error => {
+                    const statusDiv = document.getElementById('status-chat-widget');
+                    statusDiv.className = 'status error';
+                    statusDiv.innerHTML = `❌ Erreur réseau: ${error.message}`;
+                });
+        </script>
+
+        <!-- Chargement du widget embed -->
+        <script src="https://gkwww04kwcwc00gockw8ocw4.jstr.fr/widget-embed.js"></script>
+    </div>
+
+    <script>
+        // Log des erreurs JavaScript
+        window.addEventListener('error', function(event) {
+            console.error('Erreur JavaScript:', event.error);
+            console.error('Fichier:', event.filename);
+            console.error('Ligne:', event.lineno);
+        });
+
+        // Log des erreurs dans la console
+        setTimeout(() => {
+            console.log('=== ÉTAT DU WIDGET ===');
+            console.log('TechnovaConfig:', window.TechnovaConfig);
+            console.log('TechnovaWidget:', window.TechnovaWidget);
+            console.log('DOM widget:', document.getElementById('technova-embed-widget'));
+        }, 3000);
+    </script>
+</body>
+</html>
