@@ -5,7 +5,7 @@
 (function() {
     // 🔧 Configuration par défaut (peut être surchargée)
     const defaultConfig = {
-        backendUrl: 'http://localhost:3001',
+        backendUrl: 'https://gkwww04kwcwc00gockw8ocw4.jstr.fr',
         model: 'cyberAide',
         position: 'bottom-right', // bottom-right, bottom-left, top-right, top-left
         theme: 'blue', // blue, green, purple, orange
