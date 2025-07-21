@@ -1,70 +1,55 @@
-=====================================
-🚀 CODE D'INTÉGRATION TECHNOVA CHAT
-=====================================
+<!-- ========================================== -->
+<!--    CODE D'INTÉGRATION CHAT WIDGET        -->
+<!--         TECHNOVA ASSISTANT               -->
+<!-- ========================================== -->
 
-Bonjour,
+<!-- 🚀 INSTRUCTIONS POUR WORDPRESS -->
+<!-- 
+1. Copiez la ligne de code ci-dessous
+2. Collez-la dans votre site WordPress :
+   - Appearance > Theme Editor > footer.php (avant </body>)
+   - OU dans Plugins > Add Custom Code
+   - OU dans Customizer > Additional CSS/JS
+-->
 
-Voici le code d'intégration ultra-simple pour votre chat widget TechNova.
+<!-- ✅ CODE À COPIER-COLLER (1 seule ligne) -->
+<script src="https://gkwww04kwcwc00gockw8ocw4.jstr.fr/widget-embed.js"></script>
 
-📦 CODE À COLLER DANS VOTRE WORDPRESS :
-=====================================
+<!-- ========================================== -->
+<!--              C'EST TOUT !                 -->
+<!-- ========================================== -->
 
-<script src="https://votre-backend.coolify.app/widget-embed.js"></script>
+<!-- 📋 RÉSULTAT ATTENDU : -->
+<!-- 
+✅ Un bouton rond bleu apparaît en bas à droite
+✅ Au clic, une fenêtre de chat s'ouvre
+✅ L'assistant répond automatiquement aux questions
+✅ Interface responsive (mobile + desktop)
+✅ Aucune maintenance requise
+-->
 
-⚠️ IMPORTANT : Remplacez "votre-backend.coolify.app" par votre vraie URL Coolify !
-
-📍 OÙ COLLER CE CODE :
-=====================
-
-MÉTHODE 1 - ADMIN WORDPRESS (Recommandée) :
-- Allez dans Apparence → Personnaliser → Code HTML/CSS
-- Collez le code dans la section Footer
-- Cliquez sur "Publier"
-
-MÉTHODE 2 - BLOC GUTENBERG :
-- Éditez une page ou article
-- Ajoutez un bloc "HTML Personnalisé"
-- Collez le code dans ce bloc
-- Publiez
-
-MÉTHODE 3 - PLUGIN "INSERT HEADERS AND FOOTERS" :
-- Installez le plugin "Insert Headers and Footers"
-- Allez dans Réglages → Insert Headers and Footers
-- Collez le code dans "Scripts in Footer"
-- Sauvegardez
-
-✅ RÉSULTAT :
-============
-
-Après avoir collé ce code, vous verrez :
-- Un bouton chat bleu en bas à droite de votre site
-- En cliquant dessus, une fenêtre de chat s'ouvrira
-- Le chat sera fonctionnel immédiatement
-
-🎨 PERSONNALISATION (OPTIONNEL) :
-===============================
-
-Si vous voulez personnaliser (couleur, position, etc.), remplacez le code par :
-
-<script>
-window.TechnovaConfig = {
-    model: 'technova',
-    theme: 'blue',           // blue, green, purple, orange
-    position: 'bottom-right', // bottom-right, bottom-left, top-right, top-left
-    language: 'fr'
-};
-</script>
-<script src="https://votre-backend.coolify.app/widget-embed.js"></script>
-
-🔧 SUPPORT :
-============
-
-Si vous avez des problèmes :
-1. Vérifiez que l'URL du backend est correcte
-2. Assurez-vous que le code est dans le bon endroit
+<!-- 🔧 DÉPANNAGE -->
+<!-- 
+Si le widget n'apparaît pas :
+1. Vérifiez que le code est bien dans le footer
+2. Videz le cache WordPress (si vous en avez un)
 3. Testez sur un autre navigateur
-4. Contactez-nous si nécessaire
+4. Contactez le support technique
+-->
 
-C'est tout ! Votre chat widget TechNova sera fonctionnel immédiatement.
+<!-- 📞 SUPPORT TECHNIQUE -->
+<!-- 
+En cas de problème, contactez :
+- Email support technique : [VOTRE EMAIL]
+- Documentation complète fournie séparément
+-->
 
-=====================================
+<!-- ✨ FONCTIONNALITÉS INCLUSES -->
+<!--
+✅ Chat intelligent alimenté par IA
+✅ Réponses 24h/24, 7j/7
+✅ Interface moderne et professionnelle
+✅ Compatible tous navigateurs et appareils
+✅ Sécurisé et conforme RGPD
+✅ Mises à jour automatiques
+-->
