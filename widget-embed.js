@@ -179,7 +179,7 @@
         container.className = `technova-embed-container technova-embed-position-${config.position}`;
         container.id = 'technova-embed-widget';
 
-        // 💬 Bouton de chat
+       // 1. Crée un bouton flottant (cercle avec icône chat)
         const bubble = document.createElement('button');
         bubble.className = 'technova-embed-bubble';
         bubble.innerHTML = `
@@ -189,7 +189,7 @@
             </svg>
         `;
 
-        // 🖼️ iFrame pour le chat
+        // 2. Crée une iframe cachée
         const iframe = document.createElement('iframe');
         iframe.className = `technova-embed-iframe technova-embed-iframe-${config.position} technova-embed-hidden`;
         iframe.src = `${config.backendUrl}/widget-chat?model=${config.model}&theme=${config.theme}&lang=${config.language}`;
@@ -257,7 +257,8 @@
             return;
         }
 
-        // ✅ Créer les styles et le widget
+        // 3. Les colle sur la page
+        //Un petit bouton rond bleu apparaît en bas à droite du site ✅
         createStyles();
         const widget = createWidget();
         document.body.appendChild(widget);
