@@ -428,7 +428,25 @@ function generateSystemMessage(modelName, modelInfo) {
 app.get('/widget.js', (req, res) => {
     res.setHeader('Content-Type', 'application/javascript');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.sendFile(path.join(__dirname, '..', 'technova-chat-widget-production.js'));
+    res.sendFile(path.join(__dirname, 'technova-chat-widget-production.js'));
+});
+
+// ✅ NOUVEAU: Servir technova-config-production.js
+app.get('/technova-config-production.js', (req, res) => {
+    console.log('📦 Demande du fichier technova-config-production.js');
+    res.setHeader('Content-Type', 'application/javascript');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.sendFile(path.join(__dirname, 'technova-config-production.js'));
+});
+
+// ✅ NOUVEAU: Servir technova-chat-widget-production.js
+app.get('/technova-chat-widget-production.js', (req, res) => {
+    console.log('📦 Demande du fichier technova-chat-widget-production.js');
+    res.setHeader('Content-Type', 'application/javascript');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.sendFile(path.join(__dirname, 'technova-chat-widget-production.js'));
 });
 
 // ✅ NOUVEAU: Servir le fichier d'intégration widget-embed.js
@@ -437,7 +455,7 @@ app.get('/widget-embed.js', (req, res) => {
     res.setHeader('Content-Type', 'application/javascript');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Cache-Control', 'public, max-age=3600'); // Cache 1 heure
-    res.sendFile(path.join(__dirname, '..', 'widget-embed.js'));
+    res.sendFile(path.join(__dirname, 'widget-embed.js'));
 });
 
 // ✅ NOUVEAU: Endpoint pour l'iframe du chat widget
