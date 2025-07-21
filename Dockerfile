@@ -10,6 +10,11 @@ WORKDIR /app
 COPY backend/package*.json ./
 COPY backend/ ./
 
+# Copier les fichiers JavaScript de la racine (nécessaires pour le widget)
+COPY widget-embed.js ./
+COPY technova-config-production.js ./
+COPY technova-chat-widget-production.js ./
+
 # Installer les dépendances
 RUN npm install --production
 
