@@ -497,6 +497,9 @@
         // 🔄 NOUVEAU : Récupérer les infos dynamiques du modèle
         const modelInfo = await getModelInfo(config.model);
         
+        // 💾 NOUVEAU : Stocker les infos pour utilisation dans sendToAPI
+        currentModelInfo = modelInfo;
+        
         // 🎯 Construction des questions rapides dynamiques
         const quickQuestionsHTML = modelInfo.quickQuestions.map(q => `
             <button class="technova-quick-question" onclick="sendQuickQuestion(this)" data-question="${q.question}">
@@ -589,6 +592,7 @@
     // 📨 Variables globales pour le chat
     let isLoading = false;
     let messages = [];
+    let currentModelInfo = null; // ← NOUVEAU: Stocker les infos du modèle
 
     // 📝 Fonction pour envoyer un message
     window.sendMessage = async () => {
@@ -674,6 +678,13 @@
         try {
             console.log('🔗 Envoi vers:', `${config.backendUrl}/api/chat`);
             
+            // 🔄 NOUVEAU : Message système dynamique selon le modèle
+            const systemMessage = currentModelInfo && currentModelInfo.systemMessage 
+                ? currentModelInfo.systemMessage 
+                : `Tu es ${config.model}, un assistant IA. Tu peux aider avec diverses tâches et questions. Réponds de manière utile et précise.`;
+            
+            console.log('🎯 Message système utilisé:', systemMessage.substring(0, 50) + '...');
+            
             const response = await fetch(`${config.backendUrl}/api/chat`, {
                 method: 'POST',
                 headers: {
@@ -684,7 +695,7 @@
                     messages: [
                         {
                             role: 'system',
-                            content: 'Tu es TechNova Assistant, un assistant intelligent spécialisé dans l\'aide aux utilisateurs pour la compagnie TechNova.'
+                            content: systemMessage  // ← NOUVEAU : Dynamique !
                         },
                         ...messages.slice(-6), // Garder seulement les 6 derniers messages
                         {
