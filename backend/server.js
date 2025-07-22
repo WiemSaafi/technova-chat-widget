@@ -615,6 +615,399 @@ if (typeof window !== 'undefined') {
     res.send(dynamicConfig);
 });
 
+// ✅ NOUVELLE ROUTE: Démo client professionnelle
+app.get('/demo-client', (req, res) => {
+    console.log('🎨 Demande page démo client professionnelle');
+    
+    const demoClientHTML = `
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechConseil Experts - Solutions Digitales pour Entreprises</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #3B82F6;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #3B82F6;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5rem 0;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .cta-button {
+            background: #fff;
+            color: #3B82F6;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* Services Section */
+        .services {
+            padding: 5rem 0;
+            background: #f8f9fa;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #333;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .service-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .service-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .service-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #3B82F6;
+        }
+        
+        /* About Section */
+        .about {
+            padding: 5rem 0;
+        }
+        
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        
+        .about-text h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+        
+        .about-text p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .stat {
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #3B82F6;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Footer */
+        footer {
+            background: #1f2937;
+            color: white;
+            padding: 3rem 0;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: #3B82F6;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-section ul li a {
+            color: #d1d5db;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-section ul li a:hover {
+            color: #3B82F6;
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid #374151;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            text-align: center;
+            color: #9ca3af;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#" class="logo">💼 TechConseil Experts</a>
+                <ul class="nav-links">
+                    <li><a href="#accueil">Accueil</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#apropos">À propos</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="accueil">
+        <div class="container">
+            <h1>Transformez votre entreprise avec nos solutions digitales</h1>
+            <p>Nous accompagnons les PME dans leur transformation numérique avec des outils innovants et personnalisés</p>
+            <a href="#contact" class="cta-button">Démarrer votre projet</a>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="container">
+            <h2 class="section-title">Nos Services</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">🚀</div>
+                    <h3>Développement Web</h3>
+                    <p>Création de sites web modernes et performants adaptés à votre activité et vos objectifs business.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">📊</div>
+                    <h3>Solutions CRM</h3>
+                    <p>Systèmes de gestion client personnalisés pour optimiser vos relations commerciales et fidéliser votre clientèle.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🤖</div>
+                    <h3>Intelligence Artificielle</h3>
+                    <p>Intégration d'assistants IA pour automatiser vos processus et améliorer l'expérience utilisateur.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">⚙️</div>
+                    <h3>Automatisation</h3>
+                    <p>Optimisation de vos workflows avec des outils d'automatisation sur mesure pour gagner en productivité.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="apropos">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>Pourquoi choisir TechConseil Experts ?</h2>
+                    <p>Depuis 2018, nous accompagnons les entreprises dans leur transformation digitale. Notre équipe d'experts combine créativité et expertise technique pour livrer des solutions qui font vraiment la différence.</p>
+                    <p>Nous croyons que la technologie doit servir vos objectifs business, pas les compliquer. C'est pourquoi nous privilégions toujours des approches simples, efficaces et évolutives.</p>
+                </div>
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-number">150+</div>
+                        <div class="stat-label">Projets réalisés</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">98%</div>
+                        <div class="stat-label">Clients satisfaits</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">5 ans</div>
+                        <div class="stat-label">D'expérience</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <ul>
+                        <li>📧 contact@techconseil-experts.fr</li>
+                        <li>📞 +33 1 23 45 67 89</li>
+                        <li>📍 15 Rue de la Innovation, 75001 Paris</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Services</h3>
+                    <ul>
+                        <li><a href="#">Développement Web</a></li>
+                        <li><a href="#">Solutions CRM</a></li>
+                        <li><a href="#">Intelligence Artificielle</a></li>
+                        <li><a href="#">Automatisation</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Entreprise</h3>
+                    <ul>
+                        <li><a href="#">À propos</a></li>
+                        <li><a href="#">Notre équipe</a></li>
+                        <li><a href="#">Carrières</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 TechConseil Experts. Tous droits réservés. | Site créé avec nos solutions digitales</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 🎯 INTÉGRATION WIDGET - La ligne que le client doit ajouter -->
+    <script src="/widget-embed.js"></script>
+    
+</body>
+</html>`;
+    
+    res.setHeader('Content-Type', 'text/html');
+    res.send(demoClientHTML);
+});
+
 // ✅ ROUTE RACINE: Page d'accueil du backend
 app.get('/', (req, res) => {
     const welcomeHTML = `
@@ -694,6 +1087,11 @@ app.get('/', (req, res) => {
         </div>
         
         <div class="links">
+            <a href="/demo-client" class="link">
+                <h3>🎯 Démo Client Professionnelle</h3>
+                <p>Site d'entreprise réaliste avec widget intégré</p>
+            </a>
+            
             <a href="/widget-chat" class="link">
                 <h3>💬 Test Chat Widget</h3>
                 <p>Page de test complète avec chat fonctionnel</p>
