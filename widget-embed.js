@@ -6,7 +6,7 @@
     // 🔧 Configuration par défaut (peut être surchargée)
     const defaultConfig = {
         backendUrl: 'https://gkwww04kwcwc00gockw8ocw4.jstr.fr',
-        model: 'cyberAide',
+        model: 'technova',
         position: 'bottom-right', // bottom-right, bottom-left, top-right, top-left
         theme: 'blue', // blue, green, purple, orange
         showWelcome: true,

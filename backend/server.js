@@ -465,6 +465,13 @@ app.get('/widget-embed.js', (req, res) => {
 app.get('/widget-chat', (req, res) => {
     console.log('💬 Demande page chat directe');
     
+    // Récupération sécurisée des paramètres
+    const model = req.query.model || 'technova';
+    const theme = req.query.theme || 'blue';
+    const lang = req.query.lang || 'fr';
+    
+    console.log(`📋 Paramètres widget-chat: model=${model}, theme=${theme}, lang=${lang}`);
+    
     const chatPageHTML = `
 <!DOCTYPE html>
 <html lang="fr">
@@ -528,7 +535,8 @@ app.get('/widget-chat', (req, res) => {
             <ul>
                 <li><strong>Backend :</strong> ${req.protocol}://${req.get('host')}</li>
                 <li><strong>OpenWebUI :</strong> https://o088g8sswkwg0swkks408kos.jstr.fr</li>
-                <li><strong>Modèle :</strong> technova</li>
+                <li><strong>Modèle :</strong> ${model}</li>
+                <li><strong>Thème :</strong> ${theme}</li>
                 <li><strong>API :</strong> /api/chat (sécurisé)</li>
             </ul>
         </div>
@@ -556,14 +564,14 @@ app.get('/widget-chat', (req, res) => {
         openWebUIUrl: '${req.protocol}://${req.get('host')}',
         apiKey: '', // Gérée par le backend
         chatEndpoint: '/api/chat',
-        model: 'technova',
+        model: '${model}',
         maxTokens: 1500,
         temperature: 0.7,
-        systemMessage: 'Tu es TechNova Assistant, un assistant intelligent spécialisé dans l\'aide aux utilisateurs pour la compagnie TechNova.',
+        systemMessage: 'Tu es TechNova Assistant, un assistant intelligent spécialisé dans l\\'aide aux utilisateurs pour la compagnie TechNova.',
         assistantName: 'TechNova Assistant',
         description: 'Bonjour ! Je suis votre assistant TechNova. Je peux vous aider avec nos produits et répondre à vos questions.',
         quickQuestions: [
-            { icon: '🏢', text: 'Qu\'est-ce que TechNova ?', question: 'Qu\'est-ce que TechNova ?' },
+            { icon: '🏢', text: 'Qu\\'est-ce que TechNova ?', question: 'Qu\\'est-ce que TechNova ?' },
             { icon: '📦', text: 'Quels sont les produits TechNova ?', question: 'Quels sont les produits TechNova ?' },
             { icon: '📞', text: 'Comment contacter TechNova ?', question: 'Comment contacter TechNova ?' }
         ]
