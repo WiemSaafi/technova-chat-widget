@@ -615,6 +615,127 @@ if (typeof window !== 'undefined') {
     res.send(dynamicConfig);
 });
 
+// ✅ ROUTE RACINE: Page d'accueil du backend
+app.get('/', (req, res) => {
+    const welcomeHTML = `
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechNova Chat Widget Backend</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        .status {
+            background: rgba(0,255,0,0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid rgba(0,255,0,0.5);
+        }
+        .links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .link {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        .link:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        .info {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🚀</div>
+        <h1>TechNova Chat Widget Backend</h1>
+        <h2>Serveur Opérationnel sur Coolify</h2>
+        
+        <div class="status">
+            <h3>✅ BACKEND ACTIF</h3>
+            <p>Connecté à OpenWebUI : ${OPENWEBUI_URL}</p>
+            <p>Timestamp : ${new Date().toISOString()}</p>
+        </div>
+        
+        <div class="links">
+            <a href="/widget-chat" class="link">
+                <h3>💬 Test Chat Widget</h3>
+                <p>Page de test complète avec chat fonctionnel</p>
+            </a>
+            
+            <a href="/health" class="link">
+                <h3>🔍 Health Check</h3>
+                <p>Statut du backend et API</p>
+            </a>
+            
+            <a href="/widget-embed.js" class="link">
+                <h3>📦 Widget Embed</h3>
+                <p>Fichier JavaScript pour intégration</p>
+            </a>
+        </div>
+        
+        <div class="info">
+            <h3>📋 Endpoints Disponibles :</h3>
+            <ul>
+                <li><strong>/</strong> - Page d'accueil (cette page)</li>
+                <li><strong>/widget-chat</strong> - Interface de test du chat</li>
+                <li><strong>/health</strong> - Status du backend</li>
+                <li><strong>/api/chat</strong> - API sécurisée pour le chat</li>
+                <li><strong>/api/models</strong> - Liste des modèles disponibles</li>
+                <li><strong>/widget-embed.js</strong> - Script d'intégration</li>
+            </ul>
+        </div>
+        
+        <div class="info">
+            <h3>🔧 Pour Intégration WordPress :</h3>
+            <code style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; display: block;">
+                &lt;script src="${req.protocol}://${req.get('host')}/widget-embed.js"&gt;&lt;/script&gt;
+            </code>
+        </div>
+    </div>
+</body>
+</html>`;
+    
+    res.setHeader('Content-Type', 'text/html');
+    res.send(welcomeHTML);
+});
+
 // Endpoint de santé
 app.get('/health', (req, res) => {
     res.json({ 
