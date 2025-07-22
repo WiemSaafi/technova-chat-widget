@@ -18,8 +18,6 @@ COPY backend/.env.example ./
 
 # Copier les fichiers JavaScript de la racine (nécessaires pour le widget)
 COPY widget-embed.js ./
-COPY technova-config-production.js ./
-COPY technova-chat-widget-production.js ./
 
 # Exposer le port
 EXPOSE 3001
