@@ -461,155 +461,122 @@ app.get('/widget-embed.js', (req, res) => {
     res.sendFile(path.join(__dirname, 'widget-embed.js'));
 });
 
-// ✅ NOUVEAU: Endpoint pour l'iframe du chat widget
+// ✅ ENDPOINT CHAT DIRECT: Page complète avec chat widget fonctionnel
 app.get('/widget-chat', (req, res) => {
-    const { model = 'technova', theme = 'blue', lang = 'fr' } = req.query;
+    console.log('💬 Demande page chat directe');
     
-    console.log('🖼️ Demande iframe chat widget:', { model, theme, lang });
-    
-    // ✅ Génération HTML pour l'iframe
-    const iframeHTML = `
+    const chatPageHTML = `
 <!DOCTYPE html>
-<html lang="${lang}">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TechNova Chat Widget</title>
+    <title>TechNova Chat Assistant</title>
     <style>
         body {
             margin: 0;
-            padding: 0;
+            padding: 20px;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
             background: white;
-            height: 100vh;
-            overflow: hidden;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
         }
-        
-        .iframe-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
+        .header {
+            color: #3B82F6;
+            margin-bottom: 30px;
         }
-        
-        .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #f3f4f6;
-            border: none;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            cursor: pointer;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            color: #6b7280;
-            transition: all 0.2s;
+        .status {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
         }
-        
-        .close-btn:hover {
-            background: #e5e7eb;
-            color: #374151;
-        }
-        
-        #technova-chat-widget-container {
-            position: static !important;
-            width: 100% !important;
-            height: 100% !important;
-        }
-        
-        #technova-chat-popup {
-            position: static !important;
-            width: 100% !important;
-            height: 100% !important;
-            max-height: 100% !important;
-            border: none !important;
-            border-radius: 0 !important;
-            box-shadow: none !important;
-            display: flex !important;
-        }
-        
-        #technova-chat-bubble {
-            display: none !important;
+        .info {
+            background: #e8f4fd;
+            border-left: 5px solid #3B82F6;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
         }
     </style>
 </head>
 <body>
-    <div class="iframe-container">
-        <button class="close-btn" onclick="closeWidget()">×</button>
-        <div id="chat-container"></div>
+    <div class="container">
+        <div class="header">
+            <h1>💬 TechNova Chat Assistant</h1>
+            <h2>Interface de Test - Backend Opérationnel</h2>
+        </div>
+        
+        <div class="status">
+            <h3>✅ SYSTÈME FONCTIONNEL</h3>
+            <p><strong>Le chat widget est actif et connecté à votre backend Coolify !</strong></p>
+            <p>🎯 Le bouton chat apparaît en bas à droite de cette page</p>
+        </div>
+        
+        <div class="info">
+            <h3>🔧 Configuration Active :</h3>
+            <ul>
+                <li><strong>Backend :</strong> ${req.protocol}://${req.get('host')}</li>
+                <li><strong>OpenWebUI :</strong> https://o088g8sswkwg0swkks408kos.jstr.fr</li>
+                <li><strong>Modèle :</strong> technova</li>
+                <li><strong>API :</strong> /api/chat (sécurisé)</li>
+            </ul>
+        </div>
+        
+        <div class="status">
+            <h3>🧪 Test du Chat Widget</h3>
+            <p>1. Regardez en bas à droite → bouton chat bleu</p>
+            <p>2. Cliquez dessus pour ouvrir l'interface</p>
+            <p>3. Posez une question pour tester l'IA</p>
+            <p>4. Vérifiez que les réponses arrivent correctement</p>
+        </div>
+        
+        <div class="info">
+            <h3>📋 Pour le Client WordPress :</h3>
+            <p>Si ce test fonctionne, le client doit simplement ajouter cette ligne dans son WordPress :</p>
+            <code style="background: #f8f9fa; padding: 10px; border-radius: 5px; display: block; margin: 10px 0;">
+                &lt;script src="${req.protocol}://${req.get('host')}/widget-embed.js"&gt;&lt;/script&gt;
+            </code>
+        </div>
     </div>
-    
-    <!-- Chargement de la configuration dynamique -->
+
+    <!-- Configuration du widget -->
     <script>
-        // Configuration pour l'iframe
-        window.TECHNOVA_CONFIG = {
-            openWebUIUrl: '${req.protocol}://${req.get('host')}',
-            apiKey: '',
-            chatEndpoint: '/api/chat',
-            modelsEndpoint: '/api/models',
-            healthEndpoint: '/health',
-            model: '${model}',
-            maxTokens: 1500,
-            temperature: 0.7,
-            systemMessage: 'Tu es un assistant IA spécialisé.',
-            stream: false,
-            timeout: 45000,
-            errorMessages: {
-                networkError: 'Impossible de se connecter au service.',
-                serverError: 'Erreur du serveur.',
-                timeout: 'La requête a pris trop de temps.',
-                general: 'L\'assistant rencontre des difficultés.',
-                modelError: 'Erreur avec le modèle.',
-                authError: 'Erreur d\'authentification.'
-            }
-        };
-        
-        // Fonction pour fermer le widget
-        function closeWidget() {
-            parent.postMessage({ type: 'close' }, '*');
-        }
-        
-        // Fonction pour redimensionner l'iframe
-        function resizeIframe(width, height) {
-            parent.postMessage({ type: 'resize', data: { width, height } }, '*');
-        }
-        
-        // Fonction pour envoyer une notification
-        function sendNotification(count) {
-            parent.postMessage({ type: 'notification', data: { count } }, '*');
-        }
+    window.TECHNOVA_CONFIG = {
+        openWebUIUrl: '${req.protocol}://${req.get('host')}',
+        apiKey: '', // Gérée par le backend
+        chatEndpoint: '/api/chat',
+        model: 'technova',
+        maxTokens: 1500,
+        temperature: 0.7,
+        systemMessage: 'Tu es TechNova Assistant, un assistant intelligent spécialisé dans l\'aide aux utilisateurs pour la compagnie TechNova.',
+        assistantName: 'TechNova Assistant',
+        description: 'Bonjour ! Je suis votre assistant TechNova. Je peux vous aider avec nos produits et répondre à vos questions.',
+        quickQuestions: [
+            { icon: '🏢', text: 'Qu\'est-ce que TechNova ?', question: 'Qu\'est-ce que TechNova ?' },
+            { icon: '📦', text: 'Quels sont les produits TechNova ?', question: 'Quels sont les produits TechNova ?' },
+            { icon: '📞', text: 'Comment contacter TechNova ?', question: 'Comment contacter TechNova ?' }
+        ]
+    };
     </script>
     
-    <!-- Chargement du widget -->
-    <script src="/technova-config-production.js"></script>
-    <script src="/technova-chat-widget-production.js"></script>
-    
-    <script>
-        // Initialisation spécifique pour l'iframe
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🖼️ Widget iframe initialisé');
-            
-            // Ouvrir automatiquement le chat dans l'iframe
-            setTimeout(() => {
-                const chatPopup = document.getElementById('technova-chat-popup');
-                if (chatPopup) {
-                    chatPopup.classList.remove('hidden');
-                    console.log('✅ Chat ouvert dans l\'iframe');
-                }
-            }, 1000);
-        });
-    </script>
+    <!-- Chargement du widget via votre backend -->
+    <script src="/widget-embed.js"></script>
 </body>
-</html>
-    `;
+</html>`;
     
     res.setHeader('Content-Type', 'text/html');
-    res.setHeader('X-Frame-Options', 'SAMEORIGIN'); // Sécurité iframe
-    res.send(iframeHTML);
+    res.send(chatPageHTML);
 });
 
 app.get('/config.js', (req, res) => {
