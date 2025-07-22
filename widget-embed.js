@@ -6,7 +6,7 @@
     // 🔧 Configuration par défaut (peut être surchargée)
     const defaultConfig = {
         backendUrl: 'https://gkwww04kwcwc00gockw8ocw4.jstr.fr',
-        model: 'technova',
+        model: 'cyberaide',
         position: 'bottom-right', // bottom-right, bottom-left, top-right, top-left
         theme: 'blue', // blue, green, purple, orange
         showWelcome: true,
@@ -404,8 +404,8 @@
         document.head.appendChild(style);
     };
 
-    // 🏗️ Création du conteneur principal - VERSION DIRECTE SANS IFRAME
-    const createWidget = () => {
+    // 🏗️ Création du conteneur principal - VERSION DYNAMIQUE ASYNCHRONE
+    const createWidget = async () => {
         const container = document.createElement('div');
         container.className = `technova-embed-container technova-embed-position-${config.position}`;
         container.id = 'technova-embed-widget';
@@ -420,8 +420,9 @@
             </svg>
         `;
 
-        // 2. Crée l'interface de chat DIRECTEMENT (pas d'iframe)
-        const chatInterface = createChatInterface();
+        // 2. Crée l'interface de chat DYNAMIQUE (attendre la récupération des infos)
+        console.log('🔄 Création de l\'interface dynamique...');
+        const chatInterface = await createChatInterface();
 
         // 📢 Notification (optionnelle)
         const notification = document.createElement('div');
@@ -457,14 +458,55 @@
         return container;
     };
 
-    // 🎨 Création de l'interface de chat NATIVE
-    const createChatInterface = () => {
+    // 🔄 Récupération des infos dynamiques du modèle depuis l'API
+    const getModelInfo = async (modelName) => {
+        try {
+            console.log(`🔍 Récupération des infos pour le modèle: ${modelName}`);
+            
+            const response = await fetch(`${config.backendUrl}/api/model-info/${modelName}`);
+            
+            if (!response.ok) {
+                throw new Error(`Erreur API: ${response.status}`);
+            }
+            
+            const modelInfo = await response.json();
+            console.log('✅ Infos modèle reçues:', modelInfo);
+            
+            return modelInfo;
+        } catch (error) {
+            console.warn('⚠️ Erreur récupération infos modèle:', error);
+            
+            // Fallback - Configuration par défaut si l'API ne répond pas
+            return {
+                assistantName: `${config.model.charAt(0).toUpperCase() + config.model.slice(1)} Assistant`,
+                description: `Bonjour ! Je suis votre assistant ${config.model}. Comment puis-je vous aider ?`,
+                quickQuestions: [
+                    { icon: '❓', text: 'Que peux-tu faire ?', question: 'Que peux-tu faire comme assistant IA ?' },
+                    { icon: '💡', text: 'Aide-moi', question: 'Comment peux-tu m\'aider ?' },
+                    { icon: '🔧', text: 'Tes capacités', question: 'Quelles sont tes principales capacités ?' }
+                ]
+            };
+        }
+    };
+
+    // 🎨 Création de l'interface de chat DYNAMIQUE
+    const createChatInterface = async () => {
         const chatDiv = document.createElement('div');
         chatDiv.className = `technova-embed-iframe technova-embed-iframe-${config.position} technova-embed-hidden`;
         
+        // 🔄 NOUVEAU : Récupérer les infos dynamiques du modèle
+        const modelInfo = await getModelInfo(config.model);
+        
+        // 🎯 Construction des questions rapides dynamiques
+        const quickQuestionsHTML = modelInfo.quickQuestions.map(q => `
+            <button class="technova-quick-question" onclick="sendQuickQuestion(this)" data-question="${q.question}">
+                ${q.icon} ${q.text}
+            </button>
+        `).join('');
+        
         chatDiv.innerHTML = `
             <div class="technova-chat-header">
-                <h3>💬 TechNova Assistant</h3>
+                <h3>💬 ${modelInfo.assistantName}</h3>
                 <button class="technova-close-btn" onclick="this.closest('.technova-embed-iframe').classList.add('technova-embed-hidden')">×</button>
             </div>
             
@@ -472,22 +514,14 @@
                 <div class="technova-chat-messages" id="technova-messages">
                     <div class="technova-welcome-message">
                         <h4>👋 Bienvenue !</h4>
-                        <p>Je suis votre assistant TechNova. Comment puis-je vous aider ?</p>
+                        <p>${modelInfo.description}</p>
                     </div>
                 </div>
                 
                 <div class="technova-quick-questions">
                     <h4>Questions rapides</h4>
                     <div class="technova-questions-grid">
-                        <button class="technova-quick-question" onclick="sendQuickQuestion(this)" data-question="Qu'est-ce que TechNova ?">
-                            🏢 Qu'est-ce que TechNova ?
-                        </button>
-                        <button class="technova-quick-question" onclick="sendQuickQuestion(this)" data-question="Quels sont les produits TechNova ?">
-                            📦 Nos produits
-                        </button>
-                        <button class="technova-quick-question" onclick="sendQuickQuestion(this)" data-question="Comment contacter TechNova ?">
-                            📞 Contact
-                        </button>
+                        ${quickQuestionsHTML}
                     </div>
                 </div>
                 
@@ -513,8 +547,8 @@
         return chatDiv;
     };
 
-    // 🚀 Initialisation
-    const init = () => {
+    // 🚀 Initialisation DYNAMIQUE ASYNCHRONE
+    const init = async () => {
         // ✅ Vérifier que le DOM est prêt
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', init);
@@ -527,10 +561,12 @@
             return;
         }
 
-        // 3. Les colle sur la page
-        //Un petit bouton rond bleu apparaît en bas à droite du site ✅
+        // 🔄 Création des styles et du widget dynamique
+        console.log('🎯 Initialisation du widget dynamique...');
         createStyles();
-        const widget = createWidget();
+        
+        // ⏳ NOUVEAU : Attendre la création complète du widget (avec infos API)
+        const widget = await createWidget();
         document.body.appendChild(widget);
 
         // ✅ Ouverture automatique (optionnelle)
@@ -547,7 +583,7 @@
             }, 5000);
         }
 
-        console.log('✅ TechNova Widget Embed initialisé avec succès');
+        console.log('✅ Widget dynamique initialisé avec succès pour le modèle:', config.model);
     };
 
     // 📨 Variables globales pour le chat
