@@ -6,10 +6,19 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middleware - CORS OUVERT pour permettre l'intégration sur tous les sites
+// Middleware
 app.use(cors({
-    origin: '*', // ✅ CORS OUVERT : Permet l'utilisation sur n'importe quel site
-    credentials: false // ✅ Désactivé avec origin: '*' pour la sécurité
+    origin: [
+        'http://localhost:8080',
+        'http://127.0.0.1:5500',
+        'http://127.0.0.1:8080',
+        'null', // Pour les fichiers ouverts directement (file://)
+        'https://o088g8sswkwg0swkks408kos.jstr.fr', // OpenWebUI URL
+        'https://gkwww04kwcwc00gockw8ocw4.jstr.fr', // Chat Widget Backend URL
+        process.env.FRONTEND_URL,
+        process.env.OPENWEBUI_URL // URL OpenWebUI depuis les variables d'environnement
+    ].filter(Boolean), // Accepter plusieurs origins
+    credentials: true
 }));
 app.use(express.json());
 
