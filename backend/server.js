@@ -623,6 +623,247 @@ if (typeof window !== 'undefined') {
     res.send(dynamicConfig);
 });
 
+// ✅ NOUVELLE ROUTE: Page de test des attributs data-* (WordPress)
+app.get('/test-data-attributes', (req, res) => {
+    console.log('🧪 Demande page test attributs data-*');
+    
+    const testPageHTML = `
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Attributs Data-* - TechNova Widget</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .test-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid #3B82F6;
+        }
+        
+        .test-card h3 {
+            color: #3B82F6;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .test-description {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #475569;
+        }
+        
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            margin-bottom: 15px;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: #10b981;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .instructions {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .instructions h2 {
+            margin-bottom: 15px;
+        }
+        
+        .instructions ol {
+            margin-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Test des Attributs Data-* - TechNova Widget</h1>
+            <p>Cette page teste toutes les nouvelles fonctionnalités d'intégration avec attributs data-*</p>
+        </div>
+        
+        <div class="instructions">
+            <h2>📋 Instructions de Test</h2>
+            <ol>
+                <li><strong>Regardez en bas à droite/gauche</strong> → Vous devriez voir plusieurs widgets avec différentes couleurs</li>
+                <li><strong>Cliquez sur chaque widget</strong> → Vérifiez que les couleurs correspondent aux thèmes</li>
+                <li><strong>Testez le chat</strong> → Posez une question dans chaque widget</li>
+                <li><strong>Vérifiez les modèles</strong> → Chaque widget devrait utiliser le bon modèle IA</li>
+                <li><strong>Console du navigateur (F12)</strong> → Vérifiez les logs de configuration</li>
+            </ol>
+        </div>
+        
+        <div class="test-grid">
+            <!-- Test 1: Modèle + Thème Rouge -->
+            <div class="test-card">
+                <h3><span class="status-indicator"></span>Test 1: Technova + Rouge</h3>
+                <div class="test-description">
+                    Widget utilisant le modèle <strong>technova</strong> avec le thème <strong>rouge</strong> en bas à droite.
+                </div>
+                <div class="code-block">&lt;script 
+    src="${req.protocol}://${req.get('host')}/widget-embed.js"
+    data-model="technova"
+    data-theme="red"&gt;
+&lt;/script&gt;</div>
+            </div>
+            
+            <!-- Test 2: Modèle + Thème Vert + Position -->
+            <div class="test-card">
+                <h3><span class="status-indicator"></span>Test 2: WebFrontAide + Vert + Gauche</h3>
+                <div class="test-description">
+                    Widget utilisant le modèle <strong>webfrontaide</strong> avec le thème <strong>vert</strong> en bas à gauche.
+                </div>
+                <div class="code-block">&lt;script 
+    src="${req.protocol}://${req.get('host')}/widget-embed.js"
+    data-model="webfrontaide"
+    data-theme="green"
+    data-position="bottom-left"&gt;
+&lt;/script&gt;</div>
+            </div>
+            
+            <!-- Test 3: Thème Dark -->
+            <div class="test-card">
+                <h3><span class="status-indicator"></span>Test 3: Thème Sombre</h3>
+                <div class="test-description">
+                    Widget avec le nouveau thème <strong>sombre</strong> en haut à droite.
+                </div>
+                <div class="code-block">&lt;script 
+    src="${req.protocol}://${req.get('host')}/widget-embed.js"
+    data-theme="dark"
+    data-position="top-right"&gt;
+&lt;/script&gt;</div>
+            </div>
+            
+            <!-- Test 4: Thème Teal -->
+            <div class="test-card">
+                <h3><span class="status-indicator"></span>Test 4: Thème Teal + Auto-Open</h3>
+                <div class="test-description">
+                    Widget avec le thème <strong>bleu-vert</strong> qui s'ouvre automatiquement après 3 secondes.
+                </div>
+                <div class="code-block">&lt;script 
+    src="${req.protocol}://${req.get('host')}/widget-embed.js"
+    data-theme="teal"
+    data-auto-open="true"&gt;
+&lt;/script&gt;</div>
+            </div>
+        </div>
+        
+        <div class="test-card">
+            <h3>🎯 Résultats Attendus</h3>
+            <ul style="margin-left: 20px;">
+                <li><strong>Widget 1 (Rouge)</strong>: Bouton rouge, chat "Technova Assistant"</li>
+                <li><strong>Widget 2 (Vert, Gauche)</strong>: Bouton vert à gauche, chat "WebFrontAide Assistant"</li>
+                <li><strong>Widget 3 (Sombre, Haut)</strong>: Bouton sombre en haut à droite</li>
+                <li><strong>Widget 4 (Teal)</strong>: Bouton bleu-vert qui s'ouvre automatiquement</li>
+                <li><strong>Console</strong>: Logs montrant les attributs data-* détectés</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 🎯 TESTS DES ATTRIBUTS DATA-* -->
+    
+    <!-- Test 1: data-model + data-theme -->
+    <script 
+        src="${req.protocol}://${req.get('host')}/widget-embed.js"
+        data-model="technova"
+        data-theme="red">
+    </script>
+    
+    <!-- Test 2: data-model + data-theme + data-position -->
+    <script 
+        src="${req.protocol}://${req.get('host')}/widget-embed.js"
+        data-model="webfrontaide"
+        data-theme="green"
+        data-position="bottom-left">
+    </script>
+    
+    <!-- Test 3: data-theme + data-position -->
+    <script 
+        src="${req.protocol}://${req.get('host')}/widget-embed.js"
+        data-theme="dark"
+        data-position="top-right">
+    </script>
+    
+    <!-- Test 4: data-theme + data-auto-open -->
+    <script 
+        src="${req.protocol}://${req.get('host')}/widget-embed.js"
+        data-theme="teal"
+        data-auto-open="true">
+    </script>
+
+</body>
+</html>`;
+    
+    res.setHeader('Content-Type', 'text/html');
+    res.send(testPageHTML);
+});
+
 // ✅ NOUVELLE ROUTE: Démo client professionnelle
 app.get('/demo-client', (req, res) => {
     console.log('🎨 Demande page démo client professionnelle');
@@ -1095,6 +1336,11 @@ app.get('/', (req, res) => {
         </div>
         
         <div class="links">
+            <a href="/test-data-attributes" class="link">
+                <h3>🧪 Test Attributs Data-*</h3>
+                <p>NOUVEAU : Testez tous les attributs data-* en action</p>
+            </a>
+            
             <a href="/demo-client" class="link">
                 <h3>🎯 Démo Client Professionnelle</h3>
                 <p>Site d'entreprise réaliste avec widget intégré</p>

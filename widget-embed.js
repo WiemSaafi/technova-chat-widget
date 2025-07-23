@@ -3,24 +3,46 @@
 // 📝 UTILISATION: Un seul fichier à charger depuis n'importe quel site
 
 (function() {
-    // 🔧 Configuration par défaut (peut être surchargée)
-    const defaultConfig = {
-        backendUrl: 'https://gkwww04kwcwc00gockw8ocw4.jstr.fr',
-        model: 'webfrontaide',
-        position: 'bottom-right', // bottom-right, bottom-left, top-right, top-left
-        theme: 'blue', // blue, green, purple, orange
-        showWelcome: true,
-        autoOpen: false,
-        language: 'fr'
+    // 🆕 NOUVELLE FONCTIONNALITÉ : Lecture des paramètres data-* du script
+    const currentScript = document.currentScript;
+    const scriptAttributes = {
+        model: currentScript ? currentScript.getAttribute('data-model') : null,
+        url: currentScript ? currentScript.getAttribute('data-url') : null,
+        theme: currentScript ? currentScript.getAttribute('data-theme') : null,
+        position: currentScript ? currentScript.getAttribute('data-position') : null,
+        language: currentScript ? currentScript.getAttribute('data-language') : null,
+        autoOpen: currentScript ? currentScript.getAttribute('data-auto-open') === 'true' : null,
+        showWelcome: currentScript ? currentScript.getAttribute('data-welcome') !== 'false' : null
     };
 
-    // 📋 Récupération de la configuration utilisateur
+    console.log('🔍 Attributs data-* détectés:', scriptAttributes);
+
+    // 🔧 Configuration par défaut (peut être surchargée par data-* et TechnovaConfig)
+    const defaultConfig = {
+        backendUrl: scriptAttributes.url || 'https://gkwww04kwcwc00gockw8ocw4.jstr.fr',
+        model: scriptAttributes.model || 'webfrontaide',
+        position: scriptAttributes.position || 'bottom-right', // bottom-right, bottom-left, top-right, top-left
+        theme: scriptAttributes.theme || 'blue', // blue, green, purple, orange, red, pink, yellow, dark, teal
+        showWelcome: scriptAttributes.showWelcome !== null ? scriptAttributes.showWelcome : true,
+        autoOpen: scriptAttributes.autoOpen !== null ? scriptAttributes.autoOpen : false,
+        language: scriptAttributes.language || 'fr'
+    };
+
+    // 📋 Récupération de la configuration utilisateur (pour compatibilité descendante)
     const userConfig = window.TechnovaConfig || {};
-    const config = { ...defaultConfig, ...userConfig };
+    
+    // ✨ NOUVEAU : Ordre de priorité - data-* > userConfig > defaultConfig
+    const config = { 
+        ...defaultConfig, 
+        ...userConfig
+        // Les data-* sont déjà intégrés dans defaultConfig avec la priorité maximale
+    };
+
+    console.log('📊 Configuration finale:', config);
 
     console.log('🚀 TechNova Widget Embed chargé avec la configuration:', config);
 
-    // 🎨 Styles CSS selon le thème
+    // 🎨 Styles CSS selon le thème - ÉTENDU avec plus de choix
     const themes = {
         blue: {
             primary: '#3B82F6',
@@ -41,6 +63,32 @@
             primary: '#F59E0B',
             secondary: '#D97706',
             accent: '#FCD34D'
+        },
+        // 🆕 NOUVEAUX THÈMES PROFESSIONNELS
+        red: {
+            primary: '#EF4444',
+            secondary: '#DC2626',
+            accent: '#FCA5A5'
+        },
+        pink: {
+            primary: '#EC4899',
+            secondary: '#DB2777',
+            accent: '#F9A8D4'
+        },
+        yellow: {
+            primary: '#F59E0B',
+            secondary: '#D97706',
+            accent: '#FDE68A'
+        },
+        dark: {
+            primary: '#374151',
+            secondary: '#111827',
+            accent: '#9CA3AF'
+        },
+        teal: {
+            primary: '#14B8A6',
+            secondary: '#0F766E',
+            accent: '#99F6E4'
         }
     };
 
