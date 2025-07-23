@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎛️ Tableau de Bord - Tests Widget Client</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        .tests-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        .test-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 5px solid #007bff;
+        }
+        .test-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+        .test-card.priority-high {
+            border-left-color: #dc3545;
+        }
+        .test-card.priority-medium {
+            border-left-color: #ffc107;
+        }
+        .test-card.priority-low {
+            border-left-color: #28a745;
+        }
+        .test-card.priority-advanced {
+            border-left-color: #6f42c1;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .card-icon {
+            font-size: 2em;
+            margin-right: 15px;
+        }
+        .card-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+        .card-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .card-specs {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .card-specs h4 {
+            margin: 0 0 10px 0;
+            color: #495057;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+        .spec-label {
+            color: #6c757d;
+        }
+        .spec-value {
+            font-weight: 600;
+            color: #495057;
+        }
+        .test-button {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .test-button:hover {
+            background: linear-gradient(135deg, #0056b3 0%, #003d82 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,123,255,0.3);
+        }
+        .priority-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .priority-high .priority-badge {
+            background: #dc3545;
+            color: white;
+        }
+        .priority-medium .priority-badge {
+            background: #ffc107;
+            color: #212529;
+        }
+        .priority-low .priority-badge {
+            background: #28a745;
+            color: white;
+        }
+        .priority-advanced .priority-badge {
+            background: #6f42c1;
+            color: white;
+        }
+        .info-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .checklist-global {
+            background: #e8f5e8;
+            border: 1px solid #28a745;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        .checklist-global h3 {
+            color: #155724;
+            margin-top: 0;
+        }
+        .global-check-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            color: #155724;
+        }
+        .global-check-item input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+        .footer {
+            text-align: center;
+            color: white;
+            opacity: 0.8;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎛️ Tableau de Bord Tests Widget</h1>
+            <p>Validation complète du code client avant distribution</p>
+        </div>
+
+        <div class="info-section">
+            <h2>🎯 Objectif de Validation</h2>
+            <p>Ces tests vous permettent de valider que le code que vous allez donner aux clients fonctionne parfaitement dans toutes les situations. <strong>Testez dans l'ordre de priorité pour une validation efficace.</strong></p>
+            
+            <h3>📋 Code Client de Base à Valider :</h3>
+            <div style="background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace;">
+&lt;script 
+    src="https://gkwww04kwcwc00gockw8ocw4.jstr.fr/widget-embed.js"
+    data-model="technova"
+    data-theme="red"
+    data-position="bottom-left"&gt;
+&lt;/script&gt;
+            </div>
+        </div>
+
+        <div class="tests-grid">
+            <!-- Test 1 - Priority High -->
+            <div class="test-card priority-high">
+                <div class="card-header">
+                    <div class="card-icon">🔴</div>
+                    <div>
+                        <h3 class="card-title">Test Principal - TechNova Rouge</h3>
+                        <span class="priority-badge">Critique</span>
+                    </div>
+                </div>
+                <p class="card-description">
+                    Test de votre exemple exact : TechNova + Rouge + Bottom-Left. 
+                    <strong>Ce test DOIT passer avant tous les autres.</strong>
+                </p>
+                <div class="card-specs">
+                    <h4>Configuration Testée</h4>
+                    <div class="spec-item">
+                        <span class="spec-label">Modèle :</span>
+                        <span class="spec-value">technova</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Thème :</span>
+                        <span class="spec-value">red</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Position :</span>
+                        <span class="spec-value">bottom-left</span>
+                    </div>
+                </div>
+                <a href="test-technova-red.html" class="test-button" target="_blank">
+                    🧪 Lancer le Test Principal
+                </a>
+            </div>
+
+            <!-- Test 2 - Priority Medium -->
+            <div class="test-card priority-medium">
+                <div class="card-header">
+                    <div class="card-icon">🔵</div>
+                    <div>
+                        <h3 class="card-title">Test Modèle Alternatif</h3>
+                        <span class="priority-badge">Important</span>
+                    </div>
+                </div>
+                <p class="card-description">
+                    Test avec WebFrontAide pour valider que les clients peuvent changer de modèle IA facilement.
+                </p>
+                <div class="card-specs">
+                    <h4>Configuration Testée</h4>
+                    <div class="spec-item">
+                        <span class="spec-label">Modèle :</span>
+                        <span class="spec-value">webfrontaide</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Thème :</span>
+                        <span class="spec-value">blue</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Position :</span>
+                        <span class="spec-value">bottom-right</span>
+                    </div>
+                </div>
+                <a href="test-webfrontaide-blue.html" class="test-button" target="_blank">
+                    🧪 Tester Modèle Alternatif
+                </a>
+            </div>
+
+            <!-- Test 3 - Priority Low -->
+            <div class="test-card priority-low">
+                <div class="card-header">
+                    <div class="card-icon">🌐</div>
+                    <div>
+                        <h3 class="card-title">Test WordPress Réaliste</h3>
+                        <span class="priority-badge">Recommandé</span>
+                    </div>
+                </div>
+                <p class="card-description">
+                    Simulation complète d'un site WordPress client avec contenu réel, menu, footer, etc.
+                </p>
+                <div class="card-specs">
+                    <h4>Simulation Incluse</h4>
+                    <div class="spec-item">
+                        <span class="spec-label">Type :</span>
+                        <span class="spec-value">WordPress complet</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Contenu :</span>
+                        <span class="spec-value">Pages réalistes</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Responsive :</span>
+                        <span class="spec-value">Mobile + Desktop</span>
+                    </div>
+                </div>
+                <a href="test-wordpress-simulation.html" class="test-button" target="_blank">
+                    🧪 Test WordPress Complet
+                </a>
+            </div>
+
+            <!-- Test 4 - Advanced -->
+            <div class="test-card priority-advanced">
+                <div class="card-header">
+                    <div class="card-icon">⚠️</div>
+                    <div>
+                        <h3 class="card-title">Test Conflits Multiples</h3>
+                        <span class="priority-badge">Avancé</span>
+                    </div>
+                </div>
+                <p class="card-description">
+                    Test de robustesse : que se passe-t-il si un client intègre plusieurs fois le code par erreur ?
+                </p>
+                <div class="card-specs">
+                    <h4>Scénarios de Stress</h4>
+                    <div class="spec-item">
+                        <span class="spec-label">Scripts :</span>
+                        <span class="spec-value">3 widgets simultanés</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Objectif :</span>
+                        <span class="spec-value">Pas de crash</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Gestion :</span>
+                        <span class="spec-value">Erreurs gracieuses</span>
+                    </div>
+                </div>
+                <a href="test-multiple-widgets.html" class="test-button" target="_blank">
+                    ⚡ Test de Robustesse
+                </a>
+            </div>
+
+            <!-- Test 5 - Debug -->
+            <div class="test-card priority-medium">
+                <div class="card-header">
+                    <div class="card-icon">🔧</div>
+                    <div>
+                        <h3 class="card-title">Console de Debug</h3>
+                        <span class="priority-badge">Debug</span>
+                    </div>
+                </div>
+                <p class="card-description">
+                    Page spécialisée pour analyser les logs console et diagnostiquer les problèmes potentiels.
+                </p>
+                <div class="card-specs">
+                    <h4>Outils de Debug</h4>
+                    <div class="spec-item">
+                        <span class="spec-label">Logs :</span>
+                        <span class="spec-value">Détaillés + temps réel</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Erreurs :</span>
+                        <span class="spec-value">Diagnostic auto</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Config :</span>
+                        <span class="spec-value">Affichage complet</span>
+                    </div>
+                </div>
+                <a href="test-debug-console.html" class="test-button" target="_blank">
+                    🔍 Analyser les Logs
+                </a>
+            </div>
+
+            <!-- Test 6 - Thèmes -->
+            <div class="test-card priority-low">
+                <div class="card-header">
+                    <div class="card-icon">🎨</div>
+                    <div>
+                        <h3 class="card-title">Galerie des Thèmes</h3>
+                        <span class="priority-badge">Visuel</span>
+                    </div>
+                </div>
+                <p class="card-description">
+                    Visualisation de tous les thèmes de couleur disponibles pour présentation client.
+                </p>
+                <div class="card-specs">
+                    <h4>Thèmes Inclus</h4>
+                    <div class="spec-item">
+                        <span class="spec-label">Couleurs :</span>
+                        <span class="spec-value">9 thèmes complets</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Preview :</span>
+                        <span class="spec-value">Aperçu temps réel</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Codes :</span>
+                        <span class="spec-value">Copier-coller</span>
+                    </div>
+                </div>
+                <a href="test-themes-gallery.html" class="test-button" target="_blank">
+                    🎨 Voir Tous les Thèmes
+                </a>
+            </div>
+        </div>
+
+        <div class="checklist-global">
+            <h3>✅ Checklist de Validation Globale</h3>
+            <p>Cochez chaque test une fois validé :</p>
+            <div class="global-check-item">
+                <input type="checkbox" id="test1">
+                <label for="test1">Test Principal TechNova Rouge - Fonctionnel ✅</label>
+            </div>
+            <div class="global-check-item">
+                <input type="checkbox" id="test2">
+                <label for="test2">Test Modèle Alternatif WebFrontAide - OK ✅</label>
+            </div>
+            <div class="global-check-item">
+                <input type="checkbox" id="test3">
+                <label for="test3">Simulation WordPress - Responsive OK ✅</label>
+            </div>
+            <div class="global-check-item">
+                <input type="checkbox" id="test4">
+                <label for="test4">Test de Robustesse - Pas de crash ✅</label>
+            </div>
+            <div class="global-check-item">
+                <input type="checkbox" id="test5">
+                <label for="test5">Console Debug - Aucune erreur ✅</label>
+            </div>
+            <div class="global-check-item">
+                <input type="checkbox" id="test6">
+                <label for="test6">Tests Mobile - Responsive parfait ✅</label>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px;">
+                <strong>🎯 Une fois tous les tests validés :</strong>
+                <p>Vous pouvez distribuer le code client en toute confiance ! Vos clients auront une intégration parfaite.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🧪 <strong>Système de Test TechNova Widget</strong></p>
+            <p>Validation professionnelle avant distribution client</p>
+        </div>
+    </div>
+
+    <script>
+        // Sauvegarder l'état des checkboxes
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                localStorage.setItem(this.id, this.checked);
+            });
+            
+            // Restaurer l'état
+            const saved = localStorage.getItem(checkbox.id);
+            if (saved === 'true') {
+                checkbox.checked = true;
+            }
+        });
+    </script>
+</body>
+</html>

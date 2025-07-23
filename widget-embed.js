@@ -64,7 +64,6 @@
             secondary: '#D97706',
             accent: '#FCD34D'
         },
-        // 🆕 NOUVEAUX THÈMES PROFESSIONNELS
         red: {
             primary: '#EF4444',
             secondary: '#DC2626',
