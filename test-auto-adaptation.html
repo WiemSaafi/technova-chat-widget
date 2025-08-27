@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 AUTO-ADAPTATION INTELLIGENTE - Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+        
+        .cta-button {
+            background: #FF6B6B;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .cta-button:hover {
+            background: #FF5252;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.4);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .features {
+            padding: 80px 20px;
+            background: white;
+        }
+        
+        .features h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #333;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            border-left: 5px solid #FF6B6B;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-card h3 {
+            color: #FF6B6B;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+        
+        .test-section {
+            background: #2D3748;
+            color: white;
+            padding: 80px 20px;
+        }
+        
+        .test-section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #4ECDC4;
+        }
+        
+        .test-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        
+        .test-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #4ECDC4;
+        }
+        
+        .test-card h3 {
+            color: #4ECDC4;
+            margin-bottom: 15px;
+        }
+        
+        .code-block {
+            background: rgba(0,0,0,0.5);
+            border-radius: 10px;
+            padding: 15px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            color: #00FF00;
+            margin: 15px 0;
+        }
+        
+        .alert {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 30px 0;
+            text-align: center;
+            font-weight: 600;
+            border: 2px solid #FF8C00;
+        }
+        
+        .console-output {
+            background: #1a1a1a;
+            color: #00FF00;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            margin: 20px 0;
+            border: 2px solid #00FF00;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .hero p { font-size: 1.1rem; }
+            .test-cards { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div class="container">
+            <h1>🤖 AUTO-ADAPTATION INTELLIGENTE</h1>
+            <p>Le widget détecte automatiquement les couleurs de votre site<br>et s'adapte parfaitement à votre design !</p>
+            <a href="#test" class="cta-button">Voir la magie en action 🪄</a>
+        </div>
+    </div>
+    
+    <section class="features">
+        <div class="container">
+            <h2>Comment ça fonctionne ?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>🔍 SCAN INTELLIGENT</h3>
+                    <p>Le widget scanne automatiquement votre site et analyse les couleurs des headers, boutons, liens et arrière-plans pour comprendre votre identité visuelle.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>🧠 ALGORITHME IA</h3>
+                    <p>Un algorithme intelligent analyse les couleurs détectées et détermine le thème le plus harmonieux parmi nos 13 thèmes premium disponibles.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>✨ ADAPTATION PARFAITE</h3>
+                    <p>Le widget s'affiche automatiquement avec les couleurs parfaitement assorties à votre site, comme s'il avait été designé sur mesure !</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="test-section" id="test">
+        <div class="container">
+            <h2>🧪 TEST EN TEMPS RÉEL</h2>
+            
+            <div class="alert">
+                <strong>🎯 REGARDEZ EN BAS À DROITE !</strong><br>
+                Le widget a automatiquement détecté que ce site utilise des couleurs rouge/teal<br>
+                et s'est adapté en conséquence avec un thème harmonieux !
+            </div>
+            
+            <div class="test-cards">
+                <div class="test-card">
+                    <h3>📝 CODE CLIENT UTILISÉ</h3>
+                    <div class="code-block">
+&lt;script 
+    src="https://gkwww04kwcwc00gockw8ocw4.jstr.fr/widget-embed.js"
+    data-theme="auto"&gt;
+&lt;/script&gt;
+                    </div>
+                    <p><strong>C'est tout !</strong> Le client utilise juste <code>data-theme="auto"</code> et la magie opère automatiquement.</p>
+                </div>
+                
+                <div class="test-card">
+                    <h3>🎨 COULEURS DÉTECTÉES</h3>
+                    <div class="console-output">
+🔍 Détection automatique du thème du site...
+🎨 Couleurs détectées: 
+   - rgb(255, 107, 107) [Hero Rouge]
+   - rgb(78, 205, 196) [Teal]
+   - rgb(45, 55, 72) [Fond sombre]
+📊 Scores d'analyse:
+   - red: 4 points
+   - teal: 3 points  
+   - dark: 2 points
+✅ Thème automatique sélectionné: red
+                    </div>
+                </div>
+                
+                <div class="test-card">
+                    <h3>🚀 AUTRES EXEMPLES</h3>
+                    <p><strong>Site médical blanc :</strong> → Thème "medical" automatique</p>
+                    <p><strong>Site corporate bleu :</strong> → Thème "blue" automatique</p>
+                    <p><strong>Site e-commerce vert :</strong> → Thème "green" automatique</p>
+                    <p><strong>Site luxury or :</strong> → Thème "luxury" automatique</p>
+                    <p><strong>Site gaming coloré :</strong> → Thème "gaming" automatique</p>
+                </div>
+                
+                <div class="test-card">
+                    <h3>🎯 AVANTAGES CLIENT</h3>
+                    <ul style="text-align: left; line-height: 1.8;">
+                        <li>✅ <strong>Zéro configuration</strong> nécessaire</li>
+                        <li>✅ <strong>Harmonie parfaite</strong> avec le design existant</li>
+                        <li>✅ <strong>Adaptation automatique</strong> si le site change</li>
+                        <li>✅ <strong>Fallback intelligent</strong> en cas d'erreur</li>
+                        <li>✅ <strong>Performance optimisée</strong> - analyse rapide</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="alert" style="margin-top: 50px;">
+                <strong>🎪 TESTEZ MAINTENANT !</strong><br>
+                1. Cliquez sur l'orbe rouge en bas à droite<br>
+                2. Remarquez comme il s'harmonise parfaitement avec ce site rouge/teal<br>
+                3. Ouvrez la console (F12) pour voir les logs de détection automatique
+            </div>
+        </div>
+    </section>
+    
+    <section class="features">
+        <div class="container">
+            <h2>💎 Code Final pour le Client</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>🤖 Mode Automatique</h3>
+                    <div class="code-block" style="color: #333; background: #f0f0f0;">
+&lt;script 
+    src="https://votre-url.com/widget-embed.js"
+    data-theme="auto"&gt;
+&lt;/script&gt;
+                    </div>
+                    <p>Le widget s'adapte automatiquement !</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>🎨 Mode Manuel (optionnel)</h3>
+                    <div class="code-block" style="color: #333; background: #f0f0f0;">
+&lt;script 
+    src="https://votre-url.com/widget-embed.js"
+    data-theme="luxury"&gt;
+&lt;/script&gt;
+                    </div>
+                    <p>Le client peut forcer un thème spécifique</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>⚡ Configuration Complète</h3>
+                    <div class="code-block" style="color: #333; background: #f0f0f0;">
+&lt;script 
+    src="https://votre-url.com/widget-embed.js"
+    data-theme="auto"
+    data-model="technova"
+    data-position="bottom-right"&gt;
+&lt;/script&gt;
+                    </div>
+                    <p>Toutes les options combinées</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 🎯 WIDGET AUTO-ADAPTATIF EN ACTION -->
+    <script 
+        src="https://gkwww04kwcwc00gockw8ocw4.jstr.fr/widget-embed.js"
+        data-theme="auto"
+        data-model="webfrontaide">
+    </script>
+    
+    <script>
+        // Effet de particules pour rendre la page plus vivante
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.style.cssText = `
+                position: fixed;
+                width: 6px;
+                height: 6px;
+                background: radial-gradient(circle, #FF6B6B 0%, #4ECDC4 100%);
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 1000;
+                animation: float-up 5s linear forwards;
+            `;
+            
+            particle.style.left = Math.random() * window.innerWidth + 'px';
+            particle.style.top = window.innerHeight + 'px';
+            
+            document.body.appendChild(particle);
+            
+            setTimeout(() => particle.remove(), 5000);
+        }
+        
+        // Style pour l'animation des particules
+        if (!document.getElementById('particle-style')) {
+            const style = document.createElement('style');
+            style.id = 'particle-style';
+            style.textContent = `
+                @keyframes float-up {
+                    to {
+                        transform: translateY(-${window.innerHeight + 100}px) rotate(360deg);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Créer des particules périodiquement
+        setInterval(createParticle, 3000);
+        
+        // Animation du bouton CTA
+        document.querySelector('.cta-button').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('test').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        });
+    </script>
+</body>
+</html>
