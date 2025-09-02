@@ -6,11 +6,45 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middleware - CORS OUVERT pour permettre l'intégration sur tous les sites
+// Middleware - CORS RENFORCÉ pour résoudre les problèmes de preflight
 app.use(cors({
-    origin: '*', // ✅ CORS OUVERT : Permet l'utilisation sur n'importe quel site
-    credentials: false // ✅ Désactivé avec origin: '*' pour la sécurité
+    origin: '*',
+    methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
+    allowedHeaders: [
+        'Content-Type', 
+        'Authorization', 
+        'Accept', 
+        'Origin', 
+        'X-Requested-With',
+        'Access-Control-Request-Method',
+        'Access-Control-Request-Headers'
+    ],
+    credentials: false,
+    optionsSuccessStatus: 200 // Pour les anciens navigateurs
 }));
+
+// Middleware OPTIONS explicite pour gérer les requêtes preflight
+app.options('*', (req, res) => {
+    console.log('🔄 Requête OPTIONS preflight reçue pour:', req.path);
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With');
+    res.header('Access-Control-Max-Age', '86400'); // Cache preflight 24h
+    res.sendStatus(200);
+});
+
+// Middleware pour ajouter les en-têtes CORS à toutes les réponses
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With');
+    
+    // Log pour débogage CORS
+    console.log(`📡 ${req.method} ${req.path} - Origin: ${req.get('Origin') || 'N/A'}`);
+    
+    next();
+});
+
 app.use(express.json());
 
 // Configuration  api -----OpenWebUI depuis les variables d'environnement

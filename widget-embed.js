@@ -983,19 +983,36 @@
         isLoading = false;
     };
 
-    // 🚀 SYSTÈME DE COMMUNICATION ROBUSTE AVEC RETRY
+    // 🚀 SYSTÈME DE COMMUNICATION ULTRA-ROBUSTE AVEC RETRY CORS
     const sendWithRetry = async (url, options, retries = 3) => {
         for (let attempt = 1; attempt <= retries; attempt++) {
             try {
                 console.log(`🔄 Tentative ${attempt}/${retries} vers ${url}`);
                 
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+                const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
                 
-                const response = await fetch(url, {
+                // 🛡️ OPTIONS RENFORCÉES POUR CORS
+                const corsOptions = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    mode: 'cors',
+                    credentials: 'omit',
                     ...options,
                     signal: controller.signal
+                };
+                
+                console.log(`📡 Envoi requête avec options CORS:`, {
+                    method: corsOptions.method,
+                    headers: corsOptions.headers,
+                    mode: corsOptions.mode,
+                    url: url
                 });
+                
+                const response = await fetch(url, corsOptions);
                 
                 clearTimeout(timeoutId);
                 
@@ -1003,10 +1020,21 @@
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
                 
+                console.log(`✅ Requête réussie (tentative ${attempt})`);
                 return response;
                 
             } catch (error) {
                 console.warn(`⚠️ Tentative ${attempt} échouée:`, error.message);
+                
+                // 🔍 DIAGNOSTIC DÉTAILLÉ DES ERREURS CORS
+                if (error.message.includes('CORS')) {
+                    console.error('🚨 ERREUR CORS DÉTECTÉE:', {
+                        message: error.message,
+                        url: url,
+                        attempt: attempt,
+                        userAgent: navigator.userAgent
+                    });
+                }
                 
                 // Si c'est une erreur d'extension, on ignore
                 if (error.message && error.message.includes('extension')) {
@@ -1020,7 +1048,7 @@
                 }
                 
                 // Attendre avant la prochaine tentative (backoff exponentiel)
-                const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
+                const delay = Math.min(1000 * Math.pow(2, attempt - 1), 3000);
                 console.log(`⏳ Attente de ${delay}ms avant retry...`);
                 await new Promise(resolve => setTimeout(resolve, delay));
             }
