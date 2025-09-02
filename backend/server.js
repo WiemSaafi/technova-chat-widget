@@ -109,6 +109,27 @@ setInterval(checkAPIKeyExpiration, 24 * 60 * 60 * 1000);
 // renvoie la réponse au widget pour l’afficher à l’utilisateur
 // Endpoint proxy pour le chat - SÉCURISÉ
 
+// 🔧 NOUVELLE ROUTE GET pour éviter les erreurs 404 dans les logs
+app.get('/api/chat', (req, res) => {
+    console.log('📋 GET /api/chat - Information endpoint');
+    res.json({
+        message: 'TechNova Chat API - Utilisez POST pour envoyer des messages',
+        method_required: 'POST',
+        endpoint: '/api/chat',
+        example_payload: {
+            model: 'webfrontaide',
+            messages: [
+                { role: 'system', content: 'Tu es un assistant IA...' },
+                { role: 'user', content: 'Votre question ici' }
+            ],
+            max_tokens: 1500,
+            temperature: 0.7
+        },
+        status: 'API disponible',
+        timestamp: new Date().toISOString()
+    });
+});
+
 //api..Route backend qui reçoit la question et envoie à OpenWebUI
 
 app.post('/api/chat', async (req, res) => {

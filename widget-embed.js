@@ -4,13 +4,40 @@
 // 🔧 VERSION: WordPress Compatible avec gestion d'erreurs robuste
 
 (function() {
-    // 🛡️ PROTECTION CONTRE LES ERREURS D'EXTENSIONS DE NAVIGATEUR
+    // 🛡️ PROTECTION ULTRA-RENFORCÉE CONTRE LES ERREURS D'EXTENSIONS DE NAVIGATEUR
     const originalConsoleError = console.error;
+    
+    // Intercepter TOUTES les erreurs d'extensions
     window.addEventListener('error', (e) => {
-        if (e.message && (e.message.includes('extension') || e.message.includes('chrome-extension'))) {
-            console.log('🔕 TechNova: Erreur d\'extension ignorée:', e.message);
+        if (e.message && (
+            e.message.includes('extension') || 
+            e.message.includes('chrome-extension') ||
+            e.message.includes('runtime.lastError') ||
+            e.message.includes('message channel closed') ||
+            e.message.includes('listener indicated')
+        )) {
+            console.log('🔕 TechNova: Erreur d\'extension/runtime ignorée:', e.message);
             e.preventDefault();
             e.stopPropagation();
+            return true;
+        }
+    });
+    
+    // Protection console.error pour éviter les logs d'extensions
+    console.error = function(...args) {
+        const message = args.join(' ');
+        if (message.includes('extension') || message.includes('runtime.lastError')) {
+            console.log('🔕 Extension error filtered:', message);
+            return;
+        }
+        originalConsoleError.apply(console, args);
+    };
+    
+    // Protection unhandledrejection
+    window.addEventListener('unhandledrejection', (e) => {
+        if (e.reason && e.reason.message && e.reason.message.includes('extension')) {
+            console.log('🔕 Extension promise rejection ignored');
+            e.preventDefault();
             return true;
         }
     });
@@ -1118,31 +1145,131 @@
             const data = await response.json();
             console.log('✅ Réponse reçue:', data);
             
-            // 🔧 CORRECTION: Gestion flexible du format de réponse API
+            // 🔧 CORRECTION ULTRA-ROBUSTE: Gestion de TOUS les formats de réponse API
             let assistantMessage = '';
-            if (data.choices && data.choices[0] && data.choices[0].message) {
-                // Format OpenAI standard
+            
+            // 🔍 DEBUGGING: Afficher la structure complète de la réponse
+            console.log('🔍 Structure COMPLÈTE de data:', {
+                type: typeof data,
+                keys: Object.keys(data || {}),
+                data: data
+            });
+            
+            // ✅ TENTATIVE 1: Format OpenAI standard
+            if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
                 assistantMessage = data.choices[0].message.content;
-            } else if (data.response) {
-                // Format OpenWebUI direct
+                console.log('✅ Format OpenAI détecté - message extrait');
+            }
+            // ✅ TENTATIVE 2: Format OpenWebUI direct
+            else if (data.response) {
                 assistantMessage = data.response;
-            } else if (data.content) {
-                // Format alternatif
+                console.log('✅ Format OpenWebUI détecté - response extrait');
+            }
+            // ✅ TENTATIVE 3: Format content direct
+            else if (data.content) {
                 assistantMessage = data.content;
-            } else if (data.message) {
-                // Format message direct
+                console.log('✅ Format content détecté - content extrait');
+            }
+            // ✅ TENTATIVE 4: Format message direct
+            else if (data.message) {
                 assistantMessage = data.message;
-            } else if (typeof data === 'string') {
-                // Si la réponse est directement un string
+                console.log('✅ Format message détecté - message extrait');
+            }
+            // ✅ TENTATIVE 5: Si c'est directement un string
+            else if (typeof data === 'string' && data.length > 0) {
                 assistantMessage = data;
-            } else {
-                // Fallback - afficher ce qui est disponible
-                console.log('🔍 Format de réponse API inattendu:', data);
-                assistantMessage = "Réponse reçue mais format non reconnu. Vérifiez la console.";
+                console.log('✅ Format string direct détecté');
+            }
+            // ✅ TENTATIVE 6: Chercher dans les propriétés communes d'OpenWebUI
+            else if (data.text) {
+                assistantMessage = data.text;
+                console.log('✅ Format text détecté');
+            }
+            // ✅ TENTATIVE 7: Chercher une propriété qui contient du texte
+            else {
+                console.warn('⚠️ Format de réponse API non standard:', data);
+                
+                // Chercher toute propriété qui semble contenir une réponse textuelle
+                const possibleKeys = ['response', 'content', 'message', 'text', 'answer', 'reply', 'output'];
+                let found = false;
+                
+                for (const key of possibleKeys) {
+                    if (data[key] && typeof data[key] === 'string' && data[key].length > 0) {
+                        assistantMessage = data[key];
+                        console.log(`✅ Trouvé réponse dans "${key}":`, assistantMessage.substring(0, 50) + '...');
+                        found = true;
+                        break;
+                    }
+                }
+                
+                // Si toujours rien, essayer de naviguer dans choices[0]
+                if (!found && data.choices && data.choices[0]) {
+                    const choice = data.choices[0];
+                    console.log('🔍 Exploration choice[0]:', choice);
+                    
+                    if (choice.text) {
+                        assistantMessage = choice.text;
+                        console.log('✅ Trouvé dans choices[0].text');
+                        found = true;
+                    } else if (choice.content) {
+                        assistantMessage = choice.content;
+                        console.log('✅ Trouvé dans choices[0].content');
+                        found = true;
+                    } else if (choice.message && choice.message.content) {
+                        assistantMessage = choice.message.content;
+                        console.log('✅ Trouvé dans choices[0].message.content');
+                        found = true;
+                    }
+                }
+                
+                // Dernier recours: afficher un extrait de toute la réponse
+                if (!found) {
+                    console.error('❌ IMPOSSIBLE d\'extraire le message de la réponse API');
+                    console.error('📋 Données reçues complètes:', JSON.stringify(data, null, 2));
+                    assistantMessage = `🔧 Réponse API reçue mais format inattendu. Vérifiez la console pour les détails. Type: ${typeof data}, Clés: ${Object.keys(data || {}).join(', ')}`;
+                }
             }
             
-            console.log('📝 Message extrait:', assistantMessage);
-            addMessage('assistant', assistantMessage);
+            // ✅ VERIFICATION FINALE du message
+            if (!assistantMessage || assistantMessage.trim() === '') {
+                console.error('❌ Message extrait VIDE!');
+                console.error('📋 Data originale:', data);
+                assistantMessage = '❌ Réponse reçue mais contenu vide. Vérifiez la configuration du modèle.';
+            }
+            
+            console.log('📝 Message FINAL extrait:', {
+                length: assistantMessage.length,
+                preview: assistantMessage.substring(0, 100) + (assistantMessage.length > 100 ? '...' : '')
+            });
+            
+            // 🎯 AFFICHAGE FORCÉ avec vérification
+            try {
+                addMessage('assistant', assistantMessage);
+                console.log('✅ Message ajouté à l\'interface avec succès');
+                
+                // Vérifier que le message apparaît bien dans le DOM
+                setTimeout(() => {
+                    const messages = document.querySelectorAll('.technova-message-assistant');
+                    console.log(`🔍 Nombre total de messages assistant dans le DOM: ${messages.length}`);
+                    if (messages.length > 0) {
+                        const lastMessage = messages[messages.length - 1];
+                        console.log('✅ Dernier message visible:', lastMessage.textContent.substring(0, 50) + '...');
+                    }
+                }, 100);
+                
+            } catch (error) {
+                console.error('❌ Erreur lors de l\'ajout du message à l\'interface:', error);
+                // Fallback: essayer d'afficher directement
+                const messagesContainer = document.getElementById('technova-messages');
+                if (messagesContainer) {
+                    messagesContainer.innerHTML += `
+                        <div class="technova-message technova-message-assistant">
+                            <div class="technova-message-content">${assistantMessage}</div>
+                        </div>
+                    `;
+                    console.log('🔄 Message ajouté via fallback');
+                }
+            }
             
         } catch (error) {
             hideLoading();
