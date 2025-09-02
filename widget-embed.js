@@ -678,132 +678,80 @@
             </div>
         `;
 
-        // 🚀 SYSTÈME D'ÉVÉNEMENTS ULTRA-ROBUSTE - CORRIGÉ POUR REFRESH
-        const attachEventsRobustly = () => {
-            console.log('⚡ ATTACHEMENT ÉVÉNEMENTS ROBUSTE - Démarrage post-refresh');
+        // ✅ SYSTÈME D'ÉVÉNEMENTS SIMPLIFIÉ - CORRIGÉ
+        const attachEvents = () => {
+            console.log('⚡ Attachement événements - Version simplifiée');
             
-            // 🔄 NOUVELLE STRATÉGIE : Attendre que le DOM soit stable
-            const waitForStableDOM = () => {
-                return new Promise((resolve) => {
-                    let attempts = 0;
-                    const checkDOM = () => {
-                        attempts++;
-                        const quickQuestions = chatDiv.querySelectorAll('.technova-quick-question');
-                        const closeBtn = chatDiv.querySelector('.technova-close-btn');
-                        const sendBtn = chatDiv.querySelector('.technova-send-btn');
-                        const input = chatDiv.querySelector('.technova-chat-input');
-                        
-                        console.log(`🔍 Vérification DOM (tentative ${attempts}):`, {
-                            quickQuestions: quickQuestions.length,
-                            closeBtn: !!closeBtn,
-                            sendBtn: !!sendBtn,
-                            input: !!input
-                        });
-                        
-                        if (quickQuestions.length > 0 && closeBtn && sendBtn && input) {
-                            console.log('✅ DOM stable détecté - Attachement sécurisé');
-                            resolve({ quickQuestions, closeBtn, sendBtn, input });
-                        } else if (attempts < 20) {
-                            setTimeout(checkDOM, 50); // Vérification toutes les 50ms
-                        } else {
-                            console.warn('⚠️ DOM instable après 20 tentatives - Attachement forcé');
-                            resolve({ quickQuestions, closeBtn, sendBtn, input });
-                        }
-                    };
-                    checkDOM();
-                });
-            };
-            
-            // 🎯 ATTACHEMENT SÉCURISÉ APRÈS STABILISATION
-            waitForStableDOM().then(({ quickQuestions, closeBtn, sendBtn, input }) => {
-                
-                // 1. Bouton fermer - SÉCURISÉ
+            // Attendre que le DOM soit prêt
+            setTimeout(() => {
+                // 1. Bouton fermer
+                const closeBtn = chatDiv.querySelector('.technova-close-btn');
                 if (closeBtn) {
                     closeBtn.addEventListener('click', () => {
                         console.log('🔄 Fermeture du chat');
                         chatDiv.classList.add('technova-embed-hidden');
                     });
-                    console.log('✅ Bouton fermer - événement attaché');
+                    console.log('✅ Bouton fermer attaché');
                 }
                 
-                // 2. Bouton envoyer - SÉCURISÉ
+                // 2. Bouton envoyer
+                const sendBtn = chatDiv.querySelector('.technova-send-btn');
                 if (sendBtn) {
                     sendBtn.addEventListener('click', (e) => {
                         e.preventDefault();
-                        console.log('🚀 Bouton envoyer - clic détecté');
+                        console.log('🚀 Bouton envoyer cliqué');
                         window.sendMessage();
                     });
-                    console.log('✅ Bouton envoyer - événement attaché');
+                    console.log('✅ Bouton envoyer attaché');
                 }
                 
-                // 3. Input Enter - SÉCURISÉ
+                // 3. Input Enter
+                const input = chatDiv.querySelector('.technova-chat-input');
                 if (input) {
                     input.addEventListener('keypress', (event) => {
                         if (event.key === 'Enter') {
                             event.preventDefault();
-                            console.log('🚀 Enter pressée - envoi message');
+                            console.log('🚀 Enter pressée');
                             window.sendMessage();
                         }
                     });
-                    console.log('✅ Input Enter - événement attaché');
+                    console.log('✅ Input Enter attaché');
                 }
                 
-                // 4. Questions rapides - SYSTÈME ULTRA-SÉCURISÉ
-                if (quickQuestions.length > 0) {
-                    console.log(`🎯 ${quickQuestions.length} questions rapides trouvées`);
-                    
-                    quickQuestions.forEach((button, index) => {
-                        // Vérification renforcée
-                        const question = button.getAttribute('data-question');
-                        if (!question) {
-                            console.error(`❌ Question ${index} sans data-question:`, button);
-                            return;
-                        }
-                        
-                        // ✅ NETTOYAGE PRÉVENTIF : Supprimer les anciens listeners
-                        const newButton = button.cloneNode(true);
-                        button.parentNode.replaceChild(newButton, button);
-                        
-                        // ✅ ATTACHEMENT SÉCURISÉ avec gestion d'erreur robuste
-                        newButton.addEventListener('click', (e) => {
+                // 4. Questions rapides - VERSION SIMPLIFIÉE
+                const quickQuestions = chatDiv.querySelectorAll('.technova-quick-question');
+                console.log(`🎯 ${quickQuestions.length} questions rapides trouvées`);
+                
+                quickQuestions.forEach((button, index) => {
+                    const question = button.getAttribute('data-question');
+                    if (question) {
+                        button.addEventListener('click', (e) => {
                             e.preventDefault();
-                            e.stopPropagation();
+                            console.log(`🚀 Question rapide ${index + 1} cliquée:`, question);
                             
-                            console.log(`🚀 QUESTION RAPIDE ${index} CLIQUÉE:`, question);
-                            
-                            // Feedback visuel immédiat
-                            newButton.style.transition = 'transform 0.1s ease';
-                            newButton.style.transform = 'scale(0.95)';
-                            
-                            // Appel sécurisé avec vérification d'existence de la fonction
-                            try {
-                                if (typeof window.sendQuickQuestion === 'function') {
-                                    window.sendQuickQuestion(newButton);
-                                } else {
-                                    console.error('❌ window.sendQuickQuestion non disponible');
-                                }
-                            } catch (error) {
-                                console.error('❌ Erreur lors du clic question rapide:', error);
-                            }
-                            
-                            // Remettre le bouton normal
+                            // Feedback visuel
+                            button.style.transform = 'scale(0.95)';
                             setTimeout(() => {
-                                newButton.style.transform = 'scale(1)';
-                            }, 100);
-                        }, { passive: false }); // Passive false pour preventDefault
-                        
-                        console.log(`✅ Question ${index} "${question.substring(0, 30)}..." - événement attaché ROBUSTEMENT`);
-                    });
-                    
-                    console.log('🎉 TOUTES LES QUESTIONS RAPIDES SONT RÉACTIVES (POST-REFRESH) !');
-                } else {
-                    console.error('❌ Aucune question rapide trouvée après stabilisation DOM');
-                }
-            });
+                                button.style.transform = 'scale(1)';
+                            }, 150);
+                            
+                            // Appel direct à sendQuickQuestion
+                            if (window.sendQuickQuestion) {
+                                window.sendQuickQuestion(button);
+                            } else {
+                                console.error('❌ sendQuickQuestion non disponible');
+                            }
+                        });
+                        console.log(`✅ Question ${index + 1} attachée`);
+                    }
+                });
+                
+                console.log('✅ Tous les événements attachés avec succès');
+            }, 200); // Délai de 200ms pour s'assurer que le DOM est stable
         };
 
-        // 🚀 EXÉCUTION DIFFÉRÉE pour éviter les conflits de timing
-        setTimeout(attachEventsRobustly, 100);
+        // Démarrer l'attachement des événements
+        attachEvents();
 
         return chatDiv;
     };
