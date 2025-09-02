@@ -1,8 +1,32 @@
 // TechNova Chat Widget - Code d'Intégration Universel
 // 🎯 OBJECTIF: Intégration simple comme Tawk.to
 // 📝 UTILISATION: Un seul fichier à charger depuis n'importe quel site
+// 🔧 VERSION: WordPress Compatible avec gestion d'erreurs robuste
 
 (function() {
+    // 🛡️ PROTECTION CONTRE LES ERREURS D'EXTENSIONS DE NAVIGATEUR
+    const originalConsoleError = console.error;
+    window.addEventListener('error', (e) => {
+        if (e.message && (e.message.includes('extension') || e.message.includes('chrome-extension'))) {
+            console.log('🔕 TechNova: Erreur d\'extension ignorée:', e.message);
+            e.preventDefault();
+            e.stopPropagation();
+            return true;
+        }
+    });
+    
+    // 🔍 DIAGNOSTIC WORDPRESS AUTOMATIQUE
+    const wordPressDiagnostic = () => {
+        console.log('🔍 DIAGNOSTIC TECHNOVA WORDPRESS:');
+        console.log('- jQuery disponible:', typeof jQuery !== 'undefined');
+        console.log('- Document prêt:', document.readyState);
+        console.log('- WPCode détecté:', !!document.querySelector('script[src*="wpcode"]'));
+        console.log('- Extensions actives:', typeof chrome !== 'undefined' && chrome.runtime ? 'Oui' : 'Non');
+        console.log('- URL actuelle:', window.location.href);
+    };
+    
+    // Lancer le diagnostic
+    wordPressDiagnostic();
     // 🆕 NOUVELLE FONCTIONNALITÉ : Lecture des paramètres data-* du script - VERSION AMÉLIORÉE
     let currentScript = document.currentScript;
     
@@ -676,14 +700,37 @@
         return chatDiv;
     };
 
+    // 🚀 INITIALISATION WORDPRESS-COMPATIBLE AVEC DÉLAIS
+    const wordPressCompatibleInit = async () => {
+        console.log('🔄 Initialisation WordPress-compatible...');
+        
+        // Attendre que tout soit vraiment prêt
+        let attempts = 0;
+        const maxAttempts = 10;
+        
+        while (attempts < maxAttempts) {
+            attempts++;
+            
+            // Vérifier si l'environnement est stable
+            const isReady = document.readyState === 'complete' && 
+                           document.body && 
+                           !document.getElementById('technova-embed-widget');
+            
+            if (isReady) {
+                console.log(`✅ Environnement prêt après ${attempts} tentatives`);
+                break;
+            }
+            
+            console.log(`⏳ Attente environnement stable (${attempts}/${maxAttempts})...`);
+            await new Promise(resolve => setTimeout(resolve, 200));
+        }
+        
+        // Procéder à l'initialisation normale
+        return init();
+    };
+
     // 🚀 Initialisation DYNAMIQUE ASYNCHRONE
     const init = async () => {
-        // ✅ Vérifier que le DOM est prêt
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
-            return;
-        }
-
         // ✅ Vérifier si le widget n'est pas déjà présent
         if (document.getElementById('technova-embed-widget')) {
             console.warn('⚠️ TechNova Widget déjà présent sur la page');
@@ -848,7 +895,51 @@
         isLoading = false;
     };
 
-    // 🚀 Envoyer à l'API backend
+    // 🚀 SYSTÈME DE COMMUNICATION ROBUSTE AVEC RETRY
+    const sendWithRetry = async (url, options, retries = 3) => {
+        for (let attempt = 1; attempt <= retries; attempt++) {
+            try {
+                console.log(`🔄 Tentative ${attempt}/${retries} vers ${url}`);
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+                
+                const response = await fetch(url, {
+                    ...options,
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                return response;
+                
+            } catch (error) {
+                console.warn(`⚠️ Tentative ${attempt} échouée:`, error.message);
+                
+                // Si c'est une erreur d'extension, on ignore
+                if (error.message && error.message.includes('extension')) {
+                    console.log('🔕 Erreur d\'extension ignorée lors du fetch');
+                    continue;
+                }
+                
+                // Si c'est la dernière tentative, on lance l'erreur
+                if (attempt === retries) {
+                    throw error;
+                }
+                
+                // Attendre avant la prochaine tentative (backoff exponentiel)
+                const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
+                console.log(`⏳ Attente de ${delay}ms avant retry...`);
+                await new Promise(resolve => setTimeout(resolve, delay));
+            }
+        }
+    };
+
+    // 🚀 Envoyer à l'API backend - VERSION ROBUSTE
     const sendToAPI = async (userMessage) => {
         try {
             console.log('🔗 Envoi vers:', `${config.backendUrl}/api/chat`);
@@ -860,36 +951,35 @@
             
             console.log('🎯 Message système utilisé:', systemMessage.substring(0, 50) + '...');
             
-            const response = await fetch(`${config.backendUrl}/api/chat`, {
+            const requestData = {
+                model: config.model,
+                messages: [
+                    {
+                        role: 'system',
+                        content: systemMessage
+                    },
+                    ...messages.slice(-6), // Garder seulement les 6 derniers messages
+                    {
+                        role: 'user',
+                        content: userMessage
+                    }
+                ],
+                max_tokens: 1500,
+                temperature: 0.7,
+                stream: false
+            };
+            
+            // 🔄 UTILISER LE SYSTÈME DE RETRY
+            const response = await sendWithRetry(`${config.backendUrl}/api/chat`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
-                body: JSON.stringify({
-                    model: config.model,
-                    messages: [
-                        {
-                            role: 'system',
-                            content: systemMessage  // ← NOUVEAU : Dynamique !
-                        },
-                        ...messages.slice(-6), // Garder seulement les 6 derniers messages
-                        {
-                            role: 'user',
-                            content: userMessage
-                        }
-                    ],
-                    max_tokens: 1500,
-                    temperature: 0.7,
-                    stream: false
-                })
-            });
+                body: JSON.stringify(requestData)
+            }, 3);
             
             hideLoading();
-            
-            if (!response.ok) {
-                console.error('❌ Erreur API:', response.status);
-                throw new Error(`Erreur API: ${response.status}`);
-            }
             
             const data = await response.json();
             console.log('✅ Réponse reçue:', data);
@@ -922,8 +1012,20 @@
             
         } catch (error) {
             hideLoading();
-            console.error('❌ Erreur chat:', error);
-            addMessage('assistant', '❌ Désolé, je rencontre des difficultés techniques. Veuillez réessayer dans quelques instants.');
+            console.error('❌ Erreur chat finale:', error);
+            
+            // Messages d'erreur plus spécifiques
+            let errorMessage = '❌ Désolé, je rencontre des difficultés techniques.';
+            
+            if (error.name === 'AbortError') {
+                errorMessage = '⏰ Timeout - La réponse prend trop de temps. Veuillez réessayer.';
+            } else if (error.message.includes('NetworkError') || error.message.includes('fetch')) {
+                errorMessage = '🌐 Problème de connexion réseau. Vérifiez votre connexion internet.';
+            } else if (error.message.includes('CORS')) {
+                errorMessage = '🔒 Problème de sécurité CORS. Contactez le support.';
+            }
+            
+            addMessage('assistant', errorMessage + ' (Code: ' + error.message + ')');
         }
     };
 
@@ -947,6 +1049,16 @@
         }
     };
 
-    // 🚀 Démarrage
-    init();
+    // 🚀 DÉMARRAGE WORDPRESS-COMPATIBLE
+    if (document.readyState === 'loading') {
+        // Document pas encore prêt
+        document.addEventListener('DOMContentLoaded', wordPressCompatibleInit);
+        window.addEventListener('load', wordPressCompatibleInit); // Double sécurité
+    } else if (document.readyState === 'interactive') {
+        // DOM prêt mais ressources pas encore chargées
+        setTimeout(wordPressCompatibleInit, 100);
+    } else {
+        // Tout est prêt
+        wordPressCompatibleInit();
+    }
 })();
