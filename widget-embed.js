@@ -651,51 +651,114 @@
             </div>
         `;
 
-        // ✅ CORRECTION: Attacher les événements APRÈS création du DOM
-        setTimeout(() => {
-            console.log('🔄 Attachement des événements du chat...');
+        // 🚀 SYSTÈME D'ÉVÉNEMENTS ULTRA-RÉACTIF - ATTACHEMENT IMMÉDIAT
+        const attachEventsImmediately = () => {
+            console.log('⚡ ATTACHEMENT ÉVÉNEMENTS INSTANTANÉ - Démarrage');
             
-            // Bouton fermer
-            const closeBtn = chatDiv.querySelector('.technova-close-btn');
-            if (closeBtn) {
-                closeBtn.addEventListener('click', () => {
-                    console.log('🔄 Fermeture du chat');
-                    chatDiv.classList.add('technova-embed-hidden');
-                });
-            }
-            
-            // Bouton envoyer
-            const sendBtn = chatDiv.querySelector('.technova-send-btn');
-            if (sendBtn) {
-                sendBtn.addEventListener('click', () => {
-                    console.log('🔄 Bouton envoyer cliqué');
-                    window.sendMessage();
-                });
-            }
-            
-            // Input Entrée
-            const chatInput = chatDiv.querySelector('.technova-chat-input');
-            if (chatInput) {
-                chatInput.addEventListener('keypress', (event) => {
-                    if (event.key === 'Enter') {
-                        console.log('🔄 Touche Entrée pressée');
-                        window.sendMessage();
+            // Fonction de retry pour s'assurer que tous les éléments sont attachés
+            const attachWithRetry = (selector, eventType, handler, elementName, maxRetries = 5) => {
+                let retries = 0;
+                const tryAttach = () => {
+                    const element = chatDiv.querySelector(selector);
+                    if (element) {
+                        element.addEventListener(eventType, handler);
+                        console.log(`✅ ${elementName} - événement attaché avec succès`);
+                        return true;
+                    } else if (retries < maxRetries) {
+                        retries++;
+                        console.log(`⏳ ${elementName} - Retry ${retries}/${maxRetries}...`);
+                        setTimeout(tryAttach, 10);
+                        return false;
+                    } else {
+                        console.error(`❌ ${elementName} - Échec après ${maxRetries} tentatives`);
+                        return false;
                     }
-                });
-            }
+                };
+                return tryAttach();
+            };
+
+            // 1. Bouton fermer
+            attachWithRetry('.technova-close-btn', 'click', () => {
+                console.log('🔄 Fermeture du chat');
+                chatDiv.classList.add('technova-embed-hidden');
+            }, 'Bouton fermer');
+
+            // 2. Bouton envoyer  
+            attachWithRetry('.technova-send-btn', 'click', (e) => {
+                e.preventDefault();
+                console.log('🚀 Bouton envoyer - clic détecté');
+                window.sendMessage();
+            }, 'Bouton envoyer');
+
+            // 3. Input Enter
+            attachWithRetry('.technova-chat-input', 'keypress', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    console.log('🚀 Enter pressée - envoi message');
+                    window.sendMessage();
+                }
+            }, 'Input Enter');
+
+            // 4. Questions rapides - SYSTÈME ULTRA-RÉACTIF
+            let quickQuestionsRetries = 0;
+            const attachQuickQuestions = () => {
+                const quickQuestions = chatDiv.querySelectorAll('.technova-quick-question');
+                
+                if (quickQuestions.length > 0) {
+                    console.log(`🎯 ${quickQuestions.length} questions rapides détectées`);
+                    
+                    quickQuestions.forEach((button, index) => {
+                        // Vérifier que le bouton a bien un data-question
+                        const question = button.getAttribute('data-question');
+                        if (!question) {
+                            console.error(`❌ Question ${index} sans data-question:`, button);
+                            return;
+                        }
+                        
+                        // Attacher l'événement avec gestion d'erreur
+                        button.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            
+                            console.log(`🚀 QUESTION RAPIDE ${index} CLIQUÉE:`, question);
+                            
+                            // Feedback visuel immédiat
+                            button.style.transition = 'transform 0.1s ease';
+                            button.style.transform = 'scale(0.95)';
+                            
+                            // Appel de la fonction avec gestion d'erreur
+                            try {
+                                window.sendQuickQuestion(button);
+                            } catch (error) {
+                                console.error('❌ Erreur lors du clic question rapide:', error);
+                            }
+                            
+                            // Remettre le bouton normal
+                            setTimeout(() => {
+                                button.style.transform = 'scale(1)';
+                            }, 100);
+                        });
+                        
+                        console.log(`✅ Question ${index} "${question.substring(0, 30)}..." - événement attaché`);
+                    });
+                    
+                    console.log('🎉 TOUTES LES QUESTIONS RAPIDES SONT MAINTENANT RÉACTIVES !');
+                    
+                } else if (quickQuestionsRetries < 10) {
+                    quickQuestionsRetries++;
+                    console.log(`⏳ Questions rapides non trouvées - Retry ${quickQuestionsRetries}/10`);
+                    setTimeout(attachQuickQuestions, 20);
+                } else {
+                    console.error('❌ Questions rapides introuvables après 10 tentatives');
+                }
+            };
             
-            // Questions rapides
-            const quickQuestions = chatDiv.querySelectorAll('.technova-quick-question');
-            quickQuestions.forEach(button => {
-                button.addEventListener('click', () => {
-                    console.log('🔄 Question rapide cliquée:', button.dataset.question);
-                    window.sendQuickQuestion(button);
-                });
-            });
-            
-            console.log('✅ Tous les événements de chat attachés');
-            
-        }, 100); // Petit délai pour s'assurer que le DOM est prêt
+            // Lancer l'attachement des questions rapides
+            attachQuickQuestions();
+        };
+
+        // Exécuter immédiatement l'attachement
+        attachEventsImmediately();
 
         return chatDiv;
     };
@@ -789,59 +852,84 @@
     // 📨 Variables globales pour le chat
     let isLoading = false;
     let messages = [];
-    let currentModelInfo = null; // ← NOUVEAU: Stocker les infos du modèle
+    let currentModelInfo = null;
 
-    // ✅ CORRECTION: Déplacer les fonctions globales AVANT l'utilisation
-    // 📝 Fonction pour envoyer un message - CORRIGÉE
+    // 🚀 FONCTIONS GLOBALES OPTIMISÉES - DISPONIBLES IMMÉDIATEMENT
+    // 📝 Fonction pour envoyer un message - VERSION ULTRA-RAPIDE
     window.sendMessage = async () => {
-        console.log('🔄 sendMessage appelée');
+        console.log('⚡ sendMessage - Démarrage rapide');
         const input = document.querySelector('.technova-chat-input');
         
         if (!input) {
-            console.error('❌ Input de chat non trouvé');
+            console.error('❌ Input de chat introuvable');
             return;
         }
         
         const message = input.value.trim();
         
-        if (!message || isLoading) {
-            console.log('⚠️ Message vide ou chargement en cours');
+        if (!message) {
+            console.log('⚠️ Message vide - annulation');
             return;
         }
         
-        console.log('📤 Envoi du message:', message);
+        if (isLoading) {
+            console.log('⚠️ Chargement en cours - attente...');
+            return;
+        }
         
-        // Ajouter le message utilisateur
+        console.log('✅ Message à envoyer:', message);
+        
+        // Actions instantanées
         addMessage('user', message);
         input.value = '';
-        
-        // Afficher le loading
         showLoading();
         
-        // Envoyer à l'API
-        await sendToAPI(message);
+        // Envoi vers API
+        try {
+            await sendToAPI(message);
+        } catch (error) {
+            console.error('❌ Erreur envoi message:', error);
+            hideLoading();
+        }
     };
 
-    // ⚡ Fonction pour les questions rapides - CORRIGÉE
-    window.sendQuickQuestion = (button) => {
-        console.log('🔄 sendQuickQuestion appelée', button);
+    // ⚡ Fonction pour questions rapides - VERSION INSTANTANÉE  
+    window.sendQuickQuestion = async (button) => {
+        console.log('🚀 QUESTION RAPIDE CLIQUÉE - Traitement instantané');
         
-        if (!button || !button.dataset) {
-            console.error('❌ Bouton invalide pour question rapide');
+        if (!button) {
+            console.error('❌ Bouton question rapide manquant');
             return;
         }
         
-        const question = button.dataset.question;
-        console.log('❓ Question rapide sélectionnée:', question);
+        const question = button.getAttribute('data-question') || button.dataset.question;
         
-        const input = document.querySelector('.technova-chat-input');
-        if (!input) {
-            console.error('❌ Input de chat non trouvé pour question rapide');
+        if (!question) {
+            console.error('❌ Question non trouvée dans les données du bouton');
+            console.log('🔍 Attributs disponibles:', button.attributes);
             return;
         }
         
-        input.value = question;
-        window.sendMessage(); // Utiliser window.sendMessage pour être sûr
+        console.log('✅ Question sélectionnée:', question);
+        
+        // Feedback visuel instantané
+        button.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            button.style.transform = 'scale(1)';
+        }, 150);
+        
+        // Ajouter directement le message sans passer par l'input
+        addMessage('user', question);
+        showLoading();
+        
+        // Envoi direct vers l'API
+        try {
+            await sendToAPI(question);
+        } catch (error) {
+            console.error('❌ Erreur question rapide:', error);
+            hideLoading();
+            addMessage('assistant', '❌ Erreur lors de l\'envoi de votre question. Veuillez réessayer.');
+        }
     };
 
     // 💬 Ajouter un message à l'interface
