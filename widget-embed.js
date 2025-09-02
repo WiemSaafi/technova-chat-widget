@@ -3,8 +3,16 @@
 // 📝 UTILISATION: Un seul fichier à charger depuis n'importe quel site
 
 (function() {
-    // 🆕 NOUVELLE FONCTIONNALITÉ : Lecture des paramètres data-* du script
-    const currentScript = document.currentScript;
+    // 🆕 NOUVELLE FONCTIONNALITÉ : Lecture des paramètres data-* du script - VERSION AMÉLIORÉE
+    let currentScript = document.currentScript;
+    
+    // 🔧 FALLBACK : Si currentScript ne fonctionne pas (WordPress/WPCode), chercher par src
+    if (!currentScript) {
+        const scripts = document.querySelectorAll('script[src*="widget-embed.js"]');
+        currentScript = scripts[scripts.length - 1]; // Prendre le dernier script
+        console.log('🔄 Fallback script detection:', currentScript);
+    }
+    
     const scriptAttributes = {
         model: currentScript ? currentScript.getAttribute('data-model') : null,
         url: currentScript ? currentScript.getAttribute('data-url') : null,
@@ -15,7 +23,15 @@
         showWelcome: currentScript ? currentScript.getAttribute('data-welcome') !== 'false' : null
     };
 
+    console.log('🔍 Script utilisé pour détection:', currentScript);
     console.log('🔍 Attributs data-* détectés:', scriptAttributes);
+    
+    // 🔧 LOG DÉTAILLÉ pour le thème
+    if (scriptAttributes.theme) {
+        console.log(`✅ THÈME DÉTECTÉ: "${scriptAttributes.theme}" - sera utilisé !`);
+    } else {
+        console.log('⚠️ Aucun data-theme détecté, utilisation du thème par défaut');
+    }
 
     // 🔧 Configuration par défaut (peut être surchargée par data-* et TechnovaConfig)
     const defaultConfig = {
@@ -766,7 +782,30 @@
             const data = await response.json();
             console.log('✅ Réponse reçue:', data);
             
-            const assistantMessage = data.choices[0].message.content;
+            // 🔧 CORRECTION: Gestion flexible du format de réponse API
+            let assistantMessage = '';
+            if (data.choices && data.choices[0] && data.choices[0].message) {
+                // Format OpenAI standard
+                assistantMessage = data.choices[0].message.content;
+            } else if (data.response) {
+                // Format OpenWebUI direct
+                assistantMessage = data.response;
+            } else if (data.content) {
+                // Format alternatif
+                assistantMessage = data.content;
+            } else if (data.message) {
+                // Format message direct
+                assistantMessage = data.message;
+            } else if (typeof data === 'string') {
+                // Si la réponse est directement un string
+                assistantMessage = data;
+            } else {
+                // Fallback - afficher ce qui est disponible
+                console.log('🔍 Format de réponse API inattendu:', data);
+                assistantMessage = "Réponse reçue mais format non reconnu. Vérifiez la console.";
+            }
+            
+            console.log('📝 Message extrait:', assistantMessage);
             addMessage('assistant', assistantMessage);
             
         } catch (error) {
