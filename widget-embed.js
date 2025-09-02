@@ -26,6 +26,17 @@
     console.log('🔍 Script utilisé pour détection:', currentScript);
     console.log('🔍 Attributs data-* détectés:', scriptAttributes);
     
+    // 🔧 LOG DÉTAILLÉ pour le modèle
+    if (scriptAttributes.model) {
+        console.log(`✅ MODÈLE DÉTECTÉ: "${scriptAttributes.model}" - sera utilisé !`);
+    } else {
+        console.log('⚠️ Aucun data-model détecté, utilisation du modèle par défaut');
+        if (currentScript) {
+            console.log('🔍 Script trouvé mais data-model vide, vérifiez vos attributs HTML');
+            console.log('🔍 Attributs du script:', Array.from(currentScript.attributes).map(attr => `${attr.name}="${attr.value}"`));
+        }
+    }
+    
     // 🔧 LOG DÉTAILLÉ pour le thème
     if (scriptAttributes.theme) {
         console.log(`✅ THÈME DÉTECTÉ: "${scriptAttributes.theme}" - sera utilisé !`);
@@ -36,7 +47,7 @@
     // 🔧 Configuration par défaut (peut être surchargée par data-* et TechnovaConfig)
     const defaultConfig = {
         backendUrl: scriptAttributes.url || 'https://gkwww04kwcwc00gockw8ocw4.jstr.fr',
-        model: scriptAttributes.model || 'webfrontaide',
+        model: scriptAttributes.model || 'assistant', // ← Modifié pour éviter confusion
         position: scriptAttributes.position || 'bottom-right', // bottom-right, bottom-left, top-right, top-left
         theme: scriptAttributes.theme || 'blue', // blue, green, purple, orange, red, pink, yellow, dark, teal
         showWelcome: scriptAttributes.showWelcome !== null ? scriptAttributes.showWelcome : true,
