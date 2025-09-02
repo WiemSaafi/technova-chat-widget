@@ -581,9 +581,9 @@
         // 💾 NOUVEAU : Stocker les infos pour utilisation dans sendToAPI
         currentModelInfo = modelInfo;
         
-        // 🎯 Construction des questions rapides dynamiques
+        // 🎯 Construction des questions rapides dynamiques - SANS onclick
         const quickQuestionsHTML = modelInfo.quickQuestions.map(q => `
-            <button class="technova-quick-question" onclick="sendQuickQuestion(this)" data-question="${q.question}">
+            <button class="technova-quick-question" data-question="${q.question}">
                 ${q.icon} ${q.text}
             </button>
         `).join('');
@@ -591,7 +591,7 @@
         chatDiv.innerHTML = `
             <div class="technova-chat-header">
                 <h3>💬 ${modelInfo.assistantName}</h3>
-                <button class="technova-close-btn" onclick="this.closest('.technova-embed-iframe').classList.add('technova-embed-hidden')">×</button>
+                <button class="technova-close-btn">×</button>
             </div>
             
             <div class="technova-chat-body">
@@ -616,9 +616,8 @@
                             class="technova-chat-input"
                             placeholder="Posez votre question..."
                             maxlength="500"
-                            onkeypress="if(event.key==='Enter') sendMessage()"
                         >
-                        <button class="technova-send-btn" onclick="sendMessage()">
+                        <button class="technova-send-btn">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
                                 <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
                             </svg>
@@ -627,6 +626,52 @@
                 </div>
             </div>
         `;
+
+        // ✅ CORRECTION: Attacher les événements APRÈS création du DOM
+        setTimeout(() => {
+            console.log('🔄 Attachement des événements du chat...');
+            
+            // Bouton fermer
+            const closeBtn = chatDiv.querySelector('.technova-close-btn');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    console.log('🔄 Fermeture du chat');
+                    chatDiv.classList.add('technova-embed-hidden');
+                });
+            }
+            
+            // Bouton envoyer
+            const sendBtn = chatDiv.querySelector('.technova-send-btn');
+            if (sendBtn) {
+                sendBtn.addEventListener('click', () => {
+                    console.log('🔄 Bouton envoyer cliqué');
+                    window.sendMessage();
+                });
+            }
+            
+            // Input Entrée
+            const chatInput = chatDiv.querySelector('.technova-chat-input');
+            if (chatInput) {
+                chatInput.addEventListener('keypress', (event) => {
+                    if (event.key === 'Enter') {
+                        console.log('🔄 Touche Entrée pressée');
+                        window.sendMessage();
+                    }
+                });
+            }
+            
+            // Questions rapides
+            const quickQuestions = chatDiv.querySelectorAll('.technova-quick-question');
+            quickQuestions.forEach(button => {
+                button.addEventListener('click', () => {
+                    console.log('🔄 Question rapide cliquée:', button.dataset.question);
+                    window.sendQuickQuestion(button);
+                });
+            });
+            
+            console.log('✅ Tous les événements de chat attachés');
+            
+        }, 100); // Petit délai pour s'assurer que le DOM est prêt
 
         return chatDiv;
     };
@@ -699,12 +744,23 @@
     let messages = [];
     let currentModelInfo = null; // ← NOUVEAU: Stocker les infos du modèle
 
-    // 📝 Fonction pour envoyer un message
+    // ✅ CORRECTION: Déplacer les fonctions globales AVANT l'utilisation
+    // 📝 Fonction pour envoyer un message - CORRIGÉE
     window.sendMessage = async () => {
+        console.log('🔄 sendMessage appelée');
         const input = document.querySelector('.technova-chat-input');
+        
+        if (!input) {
+            console.error('❌ Input de chat non trouvé');
+            return;
+        }
+        
         const message = input.value.trim();
         
-        if (!message || isLoading) return;
+        if (!message || isLoading) {
+            console.log('⚠️ Message vide ou chargement en cours');
+            return;
+        }
         
         console.log('📤 Envoi du message:', message);
         
@@ -719,12 +775,26 @@
         await sendToAPI(message);
     };
 
-    // ⚡ Fonction pour les questions rapides
+    // ⚡ Fonction pour les questions rapides - CORRIGÉE
     window.sendQuickQuestion = (button) => {
+        console.log('🔄 sendQuickQuestion appelée', button);
+        
+        if (!button || !button.dataset) {
+            console.error('❌ Bouton invalide pour question rapide');
+            return;
+        }
+        
         const question = button.dataset.question;
+        console.log('❓ Question rapide sélectionnée:', question);
+        
         const input = document.querySelector('.technova-chat-input');
+        if (!input) {
+            console.error('❌ Input de chat non trouvé pour question rapide');
+            return;
+        }
+        
         input.value = question;
-        sendMessage();
+        window.sendMessage(); // Utiliser window.sendMessage pour être sûr
     };
 
     // 💬 Ajouter un message à l'interface

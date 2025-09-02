@@ -337,26 +337,28 @@ function generateDynamicConfig(modelName, modelInfo) {
     };
 }
 
-// ✅ FONCTION: Génère automatiquement le nom de l'assistant selon le modèle - 100% GÉNÉRIQUE
+// ✅ FONCTION: Génère le nom de l'assistant - CORRIGÉE POUR PRÉSERVER NOM EXACT
 function generateAssistantName(modelName) {
-    // ✨ NOUVEAU : Système 100% générique qui fonctionne avec TOUS les noms
     if (!modelName) return 'Assistant IA';
     
-    // 🔤 Formatage intelligent du nom
-    let formattedName = modelName
-        .trim()
-        .toLowerCase()
-        .split(/[-_\s]+/) // Diviser par tirets, underscores, espaces
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Première lettre en majuscule
-        .join(' '); // Rejoindre avec des espaces
+    // ✅ CORRECTION: Préserver le nom EXACT tel que fourni dans data-model
+    // Plus de transformation automatique qui change cyberaide en autres choses
     
-    // 🏷️ Ajouter "Assistant" si pas déjà présent
-    if (!formattedName.toLowerCase().includes('assistant')) {
-        formattedName += ' Assistant';
+    // 🎯 Garder la casse originale et juste ajouter "Assistant" si nécessaire
+    let assistantName = modelName.trim();
+    
+    // Première lettre en majuscule seulement si tout est en minuscules
+    if (assistantName === assistantName.toLowerCase()) {
+        assistantName = assistantName.charAt(0).toUpperCase() + assistantName.slice(1);
     }
     
-    console.log(`🏷️ Nom généré pour "${modelName}" → "${formattedName}"`);
-    return formattedName;
+    // 🏷️ Ajouter "Assistant" si pas déjà présent
+    if (!assistantName.toLowerCase().includes('assistant')) {
+        assistantName += ' Assistant';
+    }
+    
+    console.log(`🏷️ Nom PRÉSERVÉ pour "${modelName}" → "${assistantName}"`);
+    return assistantName;
 }
 
 // ✅ FONCTION: Génère automatiquement la description selon le modèle - 100% GÉNÉRIQUE
