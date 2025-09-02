@@ -109,11 +109,18 @@
 
     const currentTheme = themes[config.theme] || themes.blue;
 
-    // 🎯 Création du style CSS dynamique
-    const createStyles = () => {
+    // 🎯 Création du style CSS dynamique - NOUVEAU: Avec thème passé en paramètre
+    const createStyles = (themeColors) => {
+        // Supprimer l'ancien style s'il existe
+        const existingStyle = document.getElementById('technova-dynamic-styles');
+        if (existingStyle) {
+            existingStyle.remove();
+        }
+
         const style = document.createElement('style');
+        style.id = 'technova-dynamic-styles';
         style.innerHTML = `
-            /* TechNova Widget Embed Styles */
+            /* TechNova Widget Embed Styles - DYNAMIQUE */
             .technova-embed-container {
                 position: fixed;
                 z-index: 2147483647;
@@ -144,7 +151,7 @@
                 width: 60px;
                 height: 60px;
                 border-radius: 50%;
-                background: linear-gradient(135deg, ${currentTheme.primary} 0%, ${currentTheme.secondary} 100%);
+                background: linear-gradient(135deg, ${themeColors.primary} 0%, ${themeColors.secondary} 100%);
                 box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
                 cursor: pointer;
                 display: flex;
@@ -221,7 +228,7 @@
             
             /* Styles du chat intégré */
             .technova-chat-header {
-                background: linear-gradient(135deg, ${currentTheme.primary} 0%, ${currentTheme.secondary} 100%);
+                background: linear-gradient(135deg, ${themeColors.primary} 0%, ${themeColors.secondary} 100%);
                 color: white;
                 padding: 16px 20px;
                 display: flex;
@@ -271,8 +278,8 @@
             }
             
             .technova-welcome-message {
-                background: linear-gradient(135deg, #EBF4FF 0%, #DBEAFE 100%);
-                border: 1px solid #93C5FD;
+                background: linear-gradient(135deg, ${themeColors.accent}20 0%, ${themeColors.accent}30 100%);
+                border: 1px solid ${themeColors.accent};
                 border-radius: 12px;
                 padding: 16px;
                 margin-bottom: 16px;
@@ -281,13 +288,13 @@
             
             .technova-welcome-message h4 {
                 margin: 0 0 8px 0;
-                color: #1E40AF;
+                color: ${themeColors.secondary};
                 font-size: 16px;
             }
             
             .technova-welcome-message p {
                 margin: 0;
-                color: #1E40AF;
+                color: ${themeColors.secondary};
                 font-size: 14px;
                 line-height: 1.5;
             }
@@ -316,7 +323,7 @@
             }
             
             .technova-message-user .technova-message-content {
-                background: linear-gradient(135deg, ${currentTheme.primary} 0%, ${currentTheme.secondary} 100%);
+                background: linear-gradient(135deg, ${themeColors.primary} 0%, ${themeColors.secondary} 100%);
                 color: white;
                 border-bottom-right-radius: 4px;
             }
@@ -325,7 +332,7 @@
                 background: #F3F4F6;
                 color: #1F2937;
                 border-bottom-left-radius: 4px;
-                border-left: 4px solid ${currentTheme.primary};
+                border-left: 4px solid ${themeColors.primary};
             }
             
             .technova-quick-questions {
@@ -361,9 +368,9 @@
             }
             
             .technova-quick-question:hover {
-                background: ${currentTheme.primary};
+                background: ${themeColors.primary};
                 color: white;
-                border-color: ${currentTheme.primary};
+                border-color: ${themeColors.primary};
             }
             
             .technova-chat-input-container {
@@ -390,11 +397,11 @@
             }
             
             .technova-chat-input:focus {
-                border-color: ${currentTheme.primary};
+                border-color: ${themeColors.primary};
             }
             
             .technova-send-btn {
-                background: linear-gradient(135deg, ${currentTheme.primary} 0%, ${currentTheme.secondary} 100%);
+                background: linear-gradient(135deg, ${themeColors.primary} 0%, ${themeColors.secondary} 100%);
                 border: none;
                 border-radius: 50%;
                 width: 40px;
@@ -627,29 +634,53 @@
             return;
         }
 
-        // 🔄 Création des styles et du widget dynamique
+        // 🔄 NOUVEAU: Récupération des infos du modèle AVANT création du widget
         console.log('🎯 Initialisation du widget dynamique...');
-        createStyles();
+        console.log(`🎨 Application du thème: ${config.theme}`);
         
-        // ⏳ NOUVEAU : Attendre la création complète du widget (avec infos API)
-        const widget = await createWidget();
-        document.body.appendChild(widget);
+        try {
+            // ⏳ NOUVEAU : Récupérer les infos du modèle d'abord
+            const modelInfo = await getModelInfo(config.model);
+            currentModelInfo = modelInfo;
+            
+            // 🎨 NOUVEAU : Créer les styles avec le bon thème
+            const selectedTheme = themes[config.theme] || themes.blue;
+            console.log('✅ Thème sélectionné:', selectedTheme);
+            createStyles(selectedTheme);
+            
+            // 🏗️ Créer le widget avec les infos récupérées
+            const widget = await createWidget();
+            document.body.appendChild(widget);
 
-        // ✅ Ouverture automatique (optionnelle)
-        if (config.autoOpen) {
-            setTimeout(() => {
-                widget.querySelector('.technova-embed-iframe').classList.remove('technova-embed-hidden');
-            }, 2000);
+            // ✅ Ouverture automatique (optionnelle)
+            if (config.autoOpen) {
+                setTimeout(() => {
+                    widget.querySelector('.technova-embed-iframe').classList.remove('technova-embed-hidden');
+                }, 2000);
+            }
+
+            // ✅ Afficher notification de bienvenue (optionnelle)
+            if (config.showWelcome) {
+                setTimeout(() => {
+                    widget.querySelector('.technova-embed-notification').classList.remove('technova-embed-hidden');
+                }, 5000);
+            }
+
+            console.log('✅ Widget dynamique initialisé avec succès pour le modèle:', config.model);
+            console.log('🎨 Couleurs appliquées:', selectedTheme);
+            
+        } catch (error) {
+            console.error('❌ Erreur initialisation widget:', error);
+            
+            // 🔄 Fallback : Créer le widget avec les paramètres par défaut
+            const fallbackTheme = themes[config.theme] || themes.blue;
+            createStyles(fallbackTheme);
+            
+            const widget = await createWidget();
+            document.body.appendChild(widget);
+            
+            console.log('⚠️ Widget initialisé en mode fallback');
         }
-
-        // ✅ Afficher notification de bienvenue (optionnelle)
-        if (config.showWelcome) {
-            setTimeout(() => {
-                widget.querySelector('.technova-embed-notification').classList.remove('technova-embed-hidden');
-            }, 5000);
-        }
-
-        console.log('✅ Widget dynamique initialisé avec succès pour le modèle:', config.model);
     };
 
     // 📨 Variables globales pour le chat

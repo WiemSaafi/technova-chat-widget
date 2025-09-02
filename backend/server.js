@@ -337,69 +337,88 @@ function generateDynamicConfig(modelName, modelInfo) {
     };
 }
 
-// ✅ FONCTION: Génère automatiquement le nom de l'assistant selon le modèle
+// ✅ FONCTION: Génère automatiquement le nom de l'assistant selon le modèle - 100% GÉNÉRIQUE
 function generateAssistantName(modelName) {
-    const modelDisplayNames = {
-        'technova': 'TechNova Assistant',
-        'gpt-4': 'GPT-4 Assistant',
-        'gpt-3.5-turbo': 'GPT-3.5 Assistant',
-        'claude': 'Claude Assistant',
-        'llama': 'Llama Assistant',
-        'mistral': 'Mistral Assistant',
-        'cyberAide': 'CyberAide Assistant',
-
-        'gemini': 'Gemini Assistant'
-    };
+    // ✨ NOUVEAU : Système 100% générique qui fonctionne avec TOUS les noms
+    if (!modelName) return 'Assistant IA';
     
-    return modelDisplayNames[modelName] || `${modelName.charAt(0).toUpperCase() + modelName.slice(1)} Assistant`;
+    // 🔤 Formatage intelligent du nom
+    let formattedName = modelName
+        .trim()
+        .toLowerCase()
+        .split(/[-_\s]+/) // Diviser par tirets, underscores, espaces
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Première lettre en majuscule
+        .join(' '); // Rejoindre avec des espaces
+    
+    // 🏷️ Ajouter "Assistant" si pas déjà présent
+    if (!formattedName.toLowerCase().includes('assistant')) {
+        formattedName += ' Assistant';
+    }
+    
+    console.log(`🏷️ Nom généré pour "${modelName}" → "${formattedName}"`);
+    return formattedName;
 }
 
-// ✅ FONCTION: Génère automatiquement la description selon le modèle
+// ✅ FONCTION: Génère automatiquement la description selon le modèle - 100% GÉNÉRIQUE
 function generateDescription(modelName, modelInfo) {
-    const descriptions = {
-        'technova': 'Bonjour ! Je suis votre assistant TechNova. Je peux vous aider avec nos produits (NovaCRM, NovaDesk, NovaMail) et répondre à vos questions sur notre entreprise.',
-        'gpt-4': 'Bonjour ! Je suis GPT-4, un assistant IA avancé. Je peux vous aider avec vos questions, analyses, rédaction et bien plus encore.',
-        'gpt-3.5-turbo': 'Bonjour ! Je suis GPT-3.5, votre assistant IA. Je peux vous aider avec diverses tâches et répondre à vos questions.',
-        'claude': 'Bonjour ! Je suis Claude, un assistant IA créé par Anthropic. Je peux vous aider avec vos questions et tâches.',
-        'llama': 'Bonjour ! Je suis Llama, un assistant IA open source. Je peux vous aider avec vos questions et projets.',
-        'mistral': 'Bonjour ! Je suis Mistral, un assistant IA européen. Je peux vous aider avec vos questions et analyses.',
-        'gemini': 'Bonjour ! Je suis Gemini, un assistant IA de Google. Je peux vous aider avec vos questions et projets.',
-        'cyberAide': 'Bonjour ! Je suis CyberAide, votre assistant spécialisé en cybersécurité. Je peux vous aider avec la protection des systèmes, l\'analyse des menaces, les outils de sécurité (nmap, Wireshark, etc.) et les bonnes pratiques de sécurité informatique.'
-    };
+    // ✨ NOUVEAU : Système 100% générique qui fonctionne avec TOUS les noms
+    if (!modelName) return 'Bonjour ! Je suis votre assistant IA. Comment puis-je vous aider ?';
     
-    return descriptions[modelName] || `Bonjour ! Je suis ${modelName}, votre assistant IA. Je peux vous aider avec vos questions et tâches.`;
+    // 🔤 Formatage intelligent du nom (même logique que generateAssistantName)
+    let formattedName = modelName
+        .trim()
+        .toLowerCase()
+        .split(/[-_\s]+/)
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+    
+    // 📝 Description générique adaptée au nom
+    const description = `Bonjour ! Je suis ${formattedName}, votre assistant IA intelligent. Je peux vous aider avec vos questions, analyses, conseils et diverses tâches. Comment puis-je vous assister aujourd'hui ?`;
+    
+    console.log(`📝 Description générée pour "${modelName}" → "${description}"`);
+    return description;
 }
 
-// ✅ FONCTION: Génère automatiquement les questions rapides selon le modèle
+// ✅ FONCTION: Génère automatiquement les questions rapides selon le modèle - 100% GÉNÉRIQUE
 function generateQuickQuestions(modelName) {
-    const questionSets = {
-        'technova': [
-            { icon: '🏢', text: 'Qu\'est-ce que TechNova ?', question: 'Qu\'est-ce que TechNova ?' },
-            { icon: '📦', text: 'Quels sont les produits TechNova ?', question: 'Quels sont les produits TechNova ?' },
-            { icon: '📞', text: 'Comment contacter TechNova ?', question: 'Comment contacter TechNova ?' }
-        ],
-        'gpt-4': [
-            { icon: '🤖', text: 'Que peux-tu faire ?', question: 'Que peux-tu faire comme tâches ?' },
-            { icon: '📝', text: 'Aide-moi à rédiger', question: 'Peux-tu m\'aider à rédiger un texte ?' },
-            { icon: '🔍', text: 'Analyse ce document', question: 'Peux-tu analyser un document pour moi ?' }
-        ],
-        'claude': [
-            { icon: '💭', text: 'Comment puis-je t\'aider ?', question: 'Comment puis-je t\'aider aujourd\'hui ?' },
-            { icon: '📊', text: 'Analyse de données', question: 'Peux-tu m\'aider avec l\'analyse de données ?' },
-            { icon: '✍️', text: 'Rédaction créative', question: 'Peux-tu m\'aider avec la rédaction créative ?' }
-        ],
-        'cyberAide': [
-            { icon: '�️', text: 'Comment sécuriser mon système ?', question: 'Comment puis-je sécuriser mon système informatique ?' },
-            { icon: '�', text: 'Quels sont les types d\'attaques ?', question: 'Quels sont les principaux types d\'attaques cybernétiques ?' },
-            { icon: '⚠️', text: 'Mesures de sécurité de base', question: 'Quelles sont les mesures de sécurité de base à mettre en place ?' }
-        ]
-    };
+    // ✨ NOUVEAU : Système 100% générique qui fonctionne avec TOUS les noms
+    if (!modelName) {
+        return [
+            { icon: '❓', text: 'Que peux-tu faire ?', question: 'Que peux-tu faire comme assistant IA ?' },
+            { icon: '💡', text: 'Aide-moi', question: 'Comment peux-tu m\'aider ?' },
+            { icon: '🔧', text: 'Tes capacités', question: 'Quelles sont tes principales capacités ?' }
+        ];
+    }
     
-    return questionSets[modelName] || [
-        { icon: '❓', text: 'Que peux-tu faire ?', question: 'Que peux-tu faire comme assistant IA ?' },
-        { icon: '💡', text: 'Aide-moi', question: 'Comment peux-tu m\'aider ?' },
-        { icon: '🔧', text: 'Tes capacités', question: 'Quelles sont tes principales capacités ?' }
+    // 🔤 Formatage intelligent du nom (même logique que les autres fonctions)
+    let formattedName = modelName
+        .trim()
+        .toLowerCase()
+        .split(/[-_\s]+/)
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+    
+    // 📝 Questions génériques adaptées au nom du modèle
+    const questions = [
+        { 
+            icon: '❓', 
+            text: `Que peut faire ${formattedName} ?`, 
+            question: `Que peux-tu faire comme ${formattedName} ?` 
+        },
+        { 
+            icon: '💡', 
+            text: `Comment ${formattedName} peut aider ?`, 
+            question: `Comment peux-tu m'aider en tant que ${formattedName} ?` 
+        },
+        { 
+            icon: '🔧', 
+            text: `Capacités de ${formattedName}`, 
+            question: `Quelles sont les principales capacités de ${formattedName} ?` 
+        }
     ];
+    
+    console.log(`❓ Questions générées pour "${modelName}" → Adaptées à "${formattedName}"`);
+    return questions;
 }
 
 // ✅ FONCTION: Génère automatiquement le message système selon le modèle
