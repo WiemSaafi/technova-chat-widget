@@ -1,4 +1,4 @@
-# 🚀 TechNova Chat Widget - Solution Sécurisée
+# 🚀 Justrent Chat Widget - Solution Sécurisée
 
 Chat widget IA personnalisé pour WordPress avec intégration OpenWebUI sécurisée.
 
