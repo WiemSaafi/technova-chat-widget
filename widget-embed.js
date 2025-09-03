@@ -1,7 +1,7 @@
-// TechNova Chat Widget - Code d'Intégration Universel
-// 🎯 OBJECTIF: Intégration simple comme Tawk.to
+// TechNova Chat Widget - Code d'Intégration Universel REFACTORISÉ
+// 🎯 OBJECTIF: Interface créée immédiatement + réponses toujours affichées
 // 📝 UTILISATION: Un seul fichier à charger depuis n'importe quel site
-// 🔧 VERSION: WordPress Compatible avec gestion d'erreurs robuste
+// 🔧 VERSION: WordPress Compatible avec interface garantie
 
 (function() {
     // 🛡️ PROTECTION ULTRA-RENFORCÉE CONTRE LES ERREURS D'EXTENSIONS DE NAVIGATEUR
@@ -54,7 +54,8 @@
     
     // Lancer le diagnostic
     wordPressDiagnostic();
-    // 🆕 NOUVELLE FONCTIONNALITÉ : Lecture des paramètres data-* du script - VERSION AMÉLIORÉE
+
+    // 🆕 LECTURE DES PARAMÈTRES DATA-* DU SCRIPT - VERSION AMÉLIORÉE
     let currentScript = document.currentScript;
     
     // 🔧 FALLBACK : Si currentScript ne fonctionne pas (WordPress/WPCode), chercher par src
@@ -82,10 +83,6 @@
         console.log(`✅ MODÈLE DÉTECTÉ: "${scriptAttributes.model}" - sera utilisé !`);
     } else {
         console.log('⚠️ Aucun data-model détecté, utilisation du modèle par défaut');
-        if (currentScript) {
-            console.log('🔍 Script trouvé mais data-model vide, vérifiez vos attributs HTML');
-            console.log('🔍 Attributs du script:', Array.from(currentScript.attributes).map(attr => `${attr.name}="${attr.value}"`));
-        }
     }
     
     // 🔧 LOG DÉTAILLÉ pour le thème
@@ -98,10 +95,10 @@
     // 🔧 Configuration par défaut (peut être surchargée par data-* et TechnovaConfig)
     const defaultConfig = {
         backendUrl: scriptAttributes.url || 'https://gkwww04kwcwc00gockw8ocw4.jstr.fr',
-        model: scriptAttributes.model || 'assistant', // ← Modifié pour éviter confusion
+        model: scriptAttributes.model || 'assistant',
         apiKey: scriptAttributes.apiKey || currentScript?.getAttribute('data-api-key') || null,
-        position: scriptAttributes.position || 'bottom-right', // bottom-right, bottom-left, top-right, top-left
-        theme: scriptAttributes.theme || 'blue', // blue, green, purple, orange, red, pink, yellow, dark, teal
+        position: scriptAttributes.position || 'bottom-right',
+        theme: scriptAttributes.theme || 'blue',
         showWelcome: scriptAttributes.showWelcome !== null ? scriptAttributes.showWelcome : true,
         autoOpen: scriptAttributes.autoOpen !== null ? scriptAttributes.autoOpen : false,
         language: scriptAttributes.language || 'fr'
@@ -118,8 +115,6 @@
     };
 
     console.log('📊 Configuration finale:', config);
-
-    console.log('🚀 TechNova Widget Embed chargé avec la configuration:', config);
 
     // 🎨 Styles CSS selon le thème - ÉTENDU avec plus de choix
     const themes = {
@@ -172,7 +167,7 @@
 
     const currentTheme = themes[config.theme] || themes.blue;
 
-    // 🎯 Création du style CSS dynamique - NOUVEAU: Avec thème passé en paramètre
+    // 🎯 Création du style CSS dynamique
     const createStyles = (themeColors) => {
         // Supprimer l'ancien style s'il existe
         const existingStyle = document.getElementById('technova-dynamic-styles');
@@ -537,13 +532,25 @@
         document.head.appendChild(style);
     };
 
-    // 🏗️ Création du conteneur principal - VERSION DYNAMIQUE ASYNCHRONE
-    const createWidget = async () => {
+    // 🚀 ★★★ NOUVELLE APPROCHE : INTERFACE BASIQUE IMMÉDIATE ★★★
+    const createBasicWidget = () => {
+        console.log('🚀 Création de l\'interface basique IMMÉDIATE');
+        
+        // Vérifier si le widget n'existe pas déjà
+        if (document.getElementById('technova-embed-widget')) {
+            console.warn('⚠️ Widget déjà présent, abandon création');
+            return null;
+        }
+
+        // 1. Créer les styles immédiatement
+        createStyles(currentTheme);
+        
+        // 2. Créer le conteneur principal
         const container = document.createElement('div');
         container.className = `technova-embed-container technova-embed-position-${config.position}`;
         container.id = 'technova-embed-widget';
 
-       // 1. Crée un bouton flottant (cercle avec icône chat)
+        // 3. Créer le bouton flottant
         const bubble = document.createElement('button');
         bubble.className = 'technova-embed-bubble';
         bubble.innerHTML = `
@@ -553,42 +560,224 @@
             </svg>
         `;
 
-        // 2. Crée l'interface de chat DYNAMIQUE (attendre la récupération des infos)
-        console.log('🔄 Création de l\'interface dynamique...');
-        const chatInterface = await createChatInterface();
+        // 4. Créer l'interface de chat BASIQUE (sera enrichie plus tard)
+        const chatInterface = document.createElement('div');
+        chatInterface.className = `technova-embed-iframe technova-embed-iframe-${config.position} technova-embed-hidden`;
+        
+        // ✅ CRUCIAL : Créer immédiatement la structure avec #technova-messages
+        chatInterface.innerHTML = `
+            <div class="technova-chat-header">
+                <h3>💬 Assistant</h3>
+                <button class="technova-close-btn">×</button>
+            </div>
+            
+            <div class="technova-chat-body">
+                <div class="technova-chat-messages" id="technova-messages">
+                    <div class="technova-welcome-message">
+                        <h4>👋 Bienvenue !</h4>
+                        <p>Bonjour ! Je suis votre assistant IA. Comment puis-je vous aider ?</p>
+                    </div>
+                </div>
+                
+                <div class="technova-quick-questions">
+                    <h4>Questions rapides</h4>
+                    <div class="technova-questions-grid">
+                        <button class="technova-quick-question" data-question="Que peux-tu faire ?">
+                            ❓ Que peux-tu faire ?
+                        </button>
+                        <button class="technova-quick-question" data-question="Comment peux-tu m'aider ?">
+                            💡 Comment peux-tu m'aider ?
+                        </button>
+                        <button class="technova-quick-question" data-question="Quelles sont tes capacités ?">
+                            🔧 Quelles sont tes capacités ?
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="technova-chat-input-container">
+                    <div class="technova-input-wrapper">
+                        <input 
+                            type="text" 
+                            class="technova-chat-input"
+                            placeholder="Posez votre question..."
+                            maxlength="500"
+                        >
+                        <button class="technova-send-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
 
-        // 📢 Notification (optionnelle)
+        // 5. Créer la notification
         const notification = document.createElement('div');
         notification.className = 'technova-embed-notification technova-embed-hidden';
         notification.textContent = '1';
 
-        // 🔗 Assemblage
+        // 6. Assembler le widget
         container.appendChild(bubble);
         container.appendChild(chatInterface);
         container.appendChild(notification);
 
-        // 🎯 Gestionnaire d'événements
-        bubble.addEventListener('click', () => {
-            console.log('🖱️ Bouton chat cliqué');
-            chatInterface.classList.toggle('technova-embed-hidden');
-            notification.classList.add('technova-embed-hidden');
-            
-            // Focus sur l'input si le chat s'ouvre
-            if (!chatInterface.classList.contains('technova-embed-hidden')) {
-                const input = chatInterface.querySelector('.technova-chat-input');
-                setTimeout(() => input && input.focus(), 100);
-            }
-            
-            // 📊 Analytics (optionnel)
-            if (window.gtag) {
-                window.gtag('event', 'chat_opened', {
-                    event_category: 'engagement',
-                    event_label: 'technova_widget'
+        // 7. Ajouter au DOM IMMÉDIATEMENT
+        document.body.appendChild(container);
+        
+        console.log('✅ Interface basique créée - #technova-messages disponible');
+        
+        // 8. Attacher les événements immédiatement
+        attachBasicEvents(container);
+        
+        return container;
+    };
+
+    // 🔧 Attachement des événements de base
+    const attachBasicEvents = (container) => {
+        console.log('⚡ Attachement événements de base');
+        
+        const bubble = container.querySelector('.technova-embed-bubble');
+        const chatInterface = container.querySelector('.technova-embed-iframe');
+        const closeBtn = container.querySelector('.technova-close-btn');
+        const sendBtn = container.querySelector('.technova-send-btn');
+        const input = container.querySelector('.technova-chat-input');
+        const quickQuestions = container.querySelectorAll('.technova-quick-question');
+        const notification = container.querySelector('.technova-embed-notification');
+        
+        // Bouton d'ouverture/fermeture
+        if (bubble) {
+            bubble.addEventListener('click', () => {
+                console.log('🖱️ Bouton chat cliqué');
+                chatInterface.classList.toggle('technova-embed-hidden');
+                notification.classList.add('technova-embed-hidden');
+                
+                // Focus sur l'input si le chat s'ouvre
+                if (!chatInterface.classList.contains('technova-embed-hidden')) {
+                    setTimeout(() => input && input.focus(), 100);
+                }
+            });
+        }
+        
+        // Bouton fermer
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                console.log('🔄 Fermeture du chat');
+                chatInterface.classList.add('technova-embed-hidden');
+            });
+        }
+        
+        // Bouton envoyer
+        if (sendBtn) {
+            sendBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('🚀 Bouton envoyer cliqué');
+                sendMessage();
+            });
+        }
+        
+        // Input Enter
+        if (input) {
+            input.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    console.log('🚀 Enter pressée');
+                    sendMessage();
+                }
+            });
+        }
+        
+        // Questions rapides
+        quickQuestions.forEach((button, index) => {
+            const question = button.getAttribute('data-question');
+            if (question) {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log(`🚀 Question rapide cliquée: ${question}`);
+                    
+                    // Feedback visuel
+                    button.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        button.style.transform = 'scale(1)';
+                    }, 150);
+                    
+                    sendQuickQuestion(question);
                 });
             }
         });
+        
+        console.log('✅ Événements de base attachés');
+    };
 
-        return container;
+    // 🔄 ★★★ ENRICHISSEMENT ASYNCHRONE (EN PARALLÈLE) ★★★
+    const enrichWidgetAsync = async () => {
+        console.log('🎨 Enrichissement asynchrone du widget...');
+        
+        try {
+            // Récupérer les infos du modèle depuis l'API
+            const modelInfo = await getModelInfo(config.model);
+            
+            // Mettre à jour l'interface avec les infos récupérées
+            updateWidgetWithModelInfo(modelInfo);
+            
+            console.log('✅ Widget enrichi avec succès');
+            
+        } catch (error) {
+            console.warn('⚠️ Enrichissement échoué, widget reste fonctionnel:', error.message);
+        }
+    };
+    
+    // 📝 Mise à jour du widget avec les infos du modèle
+    const updateWidgetWithModelInfo = (modelInfo) => {
+        console.log('🔄 Mise à jour avec infos modèle:', modelInfo);
+        
+        // Mettre à jour le titre
+        const header = document.querySelector('#technova-embed-widget .technova-chat-header h3');
+        if (header && modelInfo.assistantName) {
+            header.textContent = `💬 ${modelInfo.assistantName}`;
+        }
+        
+        // Mettre à jour le message de bienvenue
+        const welcomeMessage = document.querySelector('#technova-embed-widget .technova-welcome-message');
+        if (welcomeMessage && modelInfo.description) {
+            welcomeMessage.innerHTML = `
+                <h4>👋 Bienvenue !</h4>
+                <p>${modelInfo.description}</p>
+            `;
+        }
+        
+        // Mettre à jour les questions rapides
+        const questionsGrid = document.querySelector('#technova-embed-widget .technova-questions-grid');
+        if (questionsGrid && modelInfo.quickQuestions) {
+            questionsGrid.innerHTML = modelInfo.quickQuestions.map(q => `
+                <button class="technova-quick-question" data-question="${q.question}">
+                    ${q.icon} ${q.text}
+                </button>
+            `).join('');
+            
+            // Réattacher les événements sur les nouvelles questions
+            questionsGrid.querySelectorAll('.technova-quick-question').forEach(button => {
+                const question = button.getAttribute('data-question');
+                if (question) {
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        console.log(`🚀 Question rapide enrichie cliquée: ${question}`);
+                        
+                        button.style.transform = 'scale(0.95)';
+                        setTimeout(() => {
+                            button.style.transform = 'scale(1)';
+                        }, 150);
+                        
+                        sendQuickQuestion(question);
+                    });
+                }
+            });
+        }
+        
+        // Sauvegarder pour utilisation dans sendToAPI
+        currentModelInfo = modelInfo;
+        
+        console.log('✅ Interface mise à jour avec les infos du modèle');
     };
 
     // 🔄 Récupération des infos dynamiques du modèle depuis l'API
@@ -622,225 +811,49 @@
         }
     };
 
-    // 🎨 Création de l'interface de chat DYNAMIQUE
-    const createChatInterface = async () => {
-        const chatDiv = document.createElement('div');
-        chatDiv.className = `technova-embed-iframe technova-embed-iframe-${config.position} technova-embed-hidden`;
+    // 🚀 ★★★ INITIALISATION NOUVELLE VERSION ★★★
+    const init = () => {
+        console.log('🚀 Initialisation NOUVELLE VERSION - Interface immédiate');
         
-        // 🔄 NOUVEAU : Récupérer les infos dynamiques du modèle
-        const modelInfo = await getModelInfo(config.model);
-        
-        // 💾 NOUVEAU : Stocker les infos pour utilisation dans sendToAPI
-        currentModelInfo = modelInfo;
-        
-        // 🎯 Construction des questions rapides dynamiques - SANS onclick
-        const quickQuestionsHTML = modelInfo.quickQuestions.map(q => `
-            <button class="technova-quick-question" data-question="${q.question}">
-                ${q.icon} ${q.text}
-            </button>
-        `).join('');
-        
-        chatDiv.innerHTML = `
-            <div class="technova-chat-header">
-                <h3>💬 ${modelInfo.assistantName}</h3>
-                <button class="technova-close-btn">×</button>
-            </div>
-            
-            <div class="technova-chat-body">
-                <div class="technova-chat-messages" id="technova-messages">
-                    <div class="technova-welcome-message">
-                        <h4>👋 Bienvenue !</h4>
-                        <p>${modelInfo.description}</p>
-                    </div>
-                </div>
-                
-                <div class="technova-quick-questions">
-                    <h4>Questions rapides</h4>
-                    <div class="technova-questions-grid">
-                        ${quickQuestionsHTML}
-                    </div>
-                </div>
-                
-                <div class="technova-chat-input-container">
-                    <div class="technova-input-wrapper">
-                        <input 
-                            type="text" 
-                            class="technova-chat-input"
-                            placeholder="Posez votre question..."
-                            maxlength="500"
-                        >
-                        <button class="technova-send-btn">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        // ✅ SYSTÈME D'ÉVÉNEMENTS SIMPLIFIÉ - CORRIGÉ
-        const attachEvents = () => {
-            console.log('⚡ Attachement événements - Version simplifiée');
-            
-            // Attendre que le DOM soit prêt
-            setTimeout(() => {
-                // 1. Bouton fermer
-                const closeBtn = chatDiv.querySelector('.technova-close-btn');
-                if (closeBtn) {
-                    closeBtn.addEventListener('click', () => {
-                        console.log('🔄 Fermeture du chat');
-                        chatDiv.classList.add('technova-embed-hidden');
-                    });
-                    console.log('✅ Bouton fermer attaché');
-                }
-                
-                // 2. Bouton envoyer
-                const sendBtn = chatDiv.querySelector('.technova-send-btn');
-                if (sendBtn) {
-                    sendBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        console.log('🚀 Bouton envoyer cliqué');
-                        window.sendMessage();
-                    });
-                    console.log('✅ Bouton envoyer attaché');
-                }
-                
-                // 3. Input Enter
-                const input = chatDiv.querySelector('.technova-chat-input');
-                if (input) {
-                    input.addEventListener('keypress', (event) => {
-                        if (event.key === 'Enter') {
-                            event.preventDefault();
-                            console.log('🚀 Enter pressée');
-                            window.sendMessage();
-                        }
-                    });
-                    console.log('✅ Input Enter attaché');
-                }
-                
-                // 4. Questions rapides - VERSION SIMPLIFIÉE
-                const quickQuestions = chatDiv.querySelectorAll('.technova-quick-question');
-                console.log(`🎯 ${quickQuestions.length} questions rapides trouvées`);
-                
-                quickQuestions.forEach((button, index) => {
-                    const question = button.getAttribute('data-question');
-                    if (question) {
-                        button.addEventListener('click', (e) => {
-                            e.preventDefault();
-                            console.log(`🚀 Question rapide ${index + 1} cliquée:`, question);
-                            
-                            // Feedback visuel
-                            button.style.transform = 'scale(0.95)';
-                            setTimeout(() => {
-                                button.style.transform = 'scale(1)';
-                            }, 150);
-                            
-                            // Appel direct à sendQuickQuestion
-                            if (window.sendQuickQuestion) {
-                                window.sendQuickQuestion(button);
-                            } else {
-                                console.error('❌ sendQuickQuestion non disponible');
-                            }
-                        });
-                        console.log(`✅ Question ${index + 1} attachée`);
-                    }
-                });
-                
-                console.log('✅ Tous les événements attachés avec succès');
-            }, 200); // Délai de 200ms pour s'assurer que le DOM est stable
-        };
-
-        // Démarrer l'attachement des événements
-        attachEvents();
-
-        return chatDiv;
-    };
-
-    // 🚀 INITIALISATION WORDPRESS-COMPATIBLE AVEC DÉLAIS
-    const wordPressCompatibleInit = async () => {
-        console.log('🔄 Initialisation WordPress-compatible...');
-        
-        // Attendre que tout soit vraiment prêt
-        let attempts = 0;
-        const maxAttempts = 10;
-        
-        while (attempts < maxAttempts) {
-            attempts++;
-            
-            // Vérifier si l'environnement est stable
-            const isReady = document.readyState === 'complete' && 
-                           document.body && 
-                           !document.getElementById('technova-embed-widget');
-            
-            if (isReady) {
-                console.log(`✅ Environnement prêt après ${attempts} tentatives`);
-                break;
-            }
-            
-            console.log(`⏳ Attente environnement stable (${attempts}/${maxAttempts})...`);
-            await new Promise(resolve => setTimeout(resolve, 200));
-        }
-        
-        // Procéder à l'initialisation normale
-        return init();
-    };
-
-    // 🚀 Initialisation DYNAMIQUE ASYNCHRONE
-    const init = async () => {
-        // ✅ Vérifier si le widget n'est pas déjà présent
+        // Vérifier si le widget n'est pas déjà présent
         if (document.getElementById('technova-embed-widget')) {
             console.warn('⚠️ TechNova Widget déjà présent sur la page');
             return;
         }
 
-        // 🔄 NOUVEAU: Récupération des infos du modèle AVANT création du widget
-        console.log('🎯 Initialisation du widget dynamique...');
-        console.log(`🎨 Application du thème: ${config.theme}`);
+        // 1. ✅ CRÉER L'INTERFACE IMMÉDIATEMENT (synchrone)
+        const widget = createBasicWidget();
         
-        try {
-            // ⏳ NOUVEAU : Récupérer les infos du modèle d'abord
-            const modelInfo = await getModelInfo(config.model);
-            currentModelInfo = modelInfo;
-            
-            // 🎨 NOUVEAU : Créer les styles avec le bon thème
-            const selectedTheme = themes[config.theme] || themes.blue;
-            console.log('✅ Thème sélectionné:', selectedTheme);
-            createStyles(selectedTheme);
-            
-            // 🏗️ Créer le widget avec les infos récupérées
-            const widget = await createWidget();
-            document.body.appendChild(widget);
-
-            // ✅ Ouverture automatique (optionnelle)
-            if (config.autoOpen) {
-                setTimeout(() => {
-                    widget.querySelector('.technova-embed-iframe').classList.remove('technova-embed-hidden');
-                }, 2000);
-            }
-
-            // ✅ Afficher notification de bienvenue (optionnelle)
-            if (config.showWelcome) {
-                setTimeout(() => {
-                    widget.querySelector('.technova-embed-notification').classList.remove('technova-embed-hidden');
-                }, 5000);
-            }
-
-            console.log('✅ Widget dynamique initialisé avec succès pour le modèle:', config.model);
-            console.log('🎨 Couleurs appliquées:', selectedTheme);
-            
-        } catch (error) {
-            console.error('❌ Erreur initialisation widget:', error);
-            
-            // 🔄 Fallback : Créer le widget avec les paramètres par défaut
-            const fallbackTheme = themes[config.theme] || themes.blue;
-            createStyles(fallbackTheme);
-            
-            const widget = await createWidget();
-            document.body.appendChild(widget);
-            
-            console.log('⚠️ Widget initialisé en mode fallback');
+        if (!widget) {
+            console.error('❌ Échec création du widget');
+            return;
         }
+
+        // 2. ✅ ENRICHIR EN PARALLÈLE (asynchrone, sans bloquer)
+        enrichWidgetAsync();
+
+        // 3. ✅ FONCTIONNALITÉS OPTIONNELLES
+        // Ouverture automatique (optionnelle)
+        if (config.autoOpen) {
+            setTimeout(() => {
+                const iframe = widget.querySelector('.technova-embed-iframe');
+                if (iframe) {
+                    iframe.classList.remove('technova-embed-hidden');
+                }
+            }, 2000);
+        }
+
+        // Afficher notification de bienvenue (optionnelle)
+        if (config.showWelcome) {
+            setTimeout(() => {
+                const notification = widget.querySelector('.technova-embed-notification');
+                if (notification) {
+                    notification.classList.remove('technova-embed-hidden');
+                }
+            }, 5000);
+        }
+
+        console.log('✅ Widget initialisé avec interface immédiate');
     };
 
     // 📨 Variables globales pour le chat
@@ -848,10 +861,10 @@
     let messages = [];
     let currentModelInfo = null;
 
-    // 🚀 FONCTIONS GLOBALES OPTIMISÉES - DISPONIBLES IMMÉDIATEMENT
-    // 📝 Fonction pour envoyer un message - VERSION ULTRA-RAPIDE
-    window.sendMessage = async () => {
-        console.log('⚡ sendMessage - Démarrage rapide');
+    // 🚀 ★★★ FONCTIONS GLOBALES OPTIMISÉES ★★★
+    // 📝 Fonction pour envoyer un message - VERSION GARANTIE
+    const sendMessage = async () => {
+        console.log('⚡ sendMessage - Démarrage');
         const input = document.querySelector('.technova-chat-input');
         
         if (!input) {
@@ -887,30 +900,16 @@
         }
     };
 
-    // ⚡ Fonction pour questions rapides - VERSION INSTANTANÉE  
-    window.sendQuickQuestion = async (button) => {
-        console.log('🚀 QUESTION RAPIDE CLIQUÉE - Traitement instantané');
-        
-        if (!button) {
-            console.error('❌ Bouton question rapide manquant');
-            return;
-        }
-        
-        const question = button.getAttribute('data-question') || button.dataset.question;
+    // ⚡ Fonction pour questions rapides - VERSION GARANTIE
+    const sendQuickQuestion = async (question) => {
+        console.log('🚀 QUESTION RAPIDE - Traitement:', question);
         
         if (!question) {
-            console.error('❌ Question non trouvée dans les données du bouton');
-            console.log('🔍 Attributs disponibles:', button.attributes);
+            console.error('❌ Question vide');
             return;
         }
         
         console.log('✅ Question sélectionnée:', question);
-        
-        // Feedback visuel instantané
-        button.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-            button.style.transform = 'scale(1)';
-        }, 150);
         
         // Ajouter directement le message sans passer par l'input
         addMessage('user', question);
@@ -926,9 +925,31 @@
         }
     };
 
-    // 💬 Ajouter un message à l'interface
+    // 💬 ★★★ FONCTION ADDMESSAGE GARANTIE ★★★
     const addMessage = (role, content) => {
-        const messagesContainer = document.getElementById('technova-messages');
+        console.log(`📝 Ajout message ${role}:`, content.substring(0, 50) + '...');
+        
+        // ✅ VÉRIFICATION ET CRÉATION FORCÉE si nécessaire
+        let messagesContainer = document.getElementById('technova-messages');
+        
+        if (!messagesContainer) {
+            console.warn('⚠️ Container #technova-messages introuvable - vérification du widget');
+            
+            // Vérifier si le widget principal existe
+            const widget = document.getElementById('technova-embed-widget');
+            if (!widget) {
+                console.error('❌ Widget principal introuvable - recréation');
+                init(); // Recréer le widget
+                messagesContainer = document.getElementById('technova-messages');
+            }
+        }
+        
+        if (!messagesContainer) {
+            console.error('❌ IMPOSSIBLE de trouver ou créer #technova-messages');
+            return;
+        }
+        
+        // ✅ Créer le message
         const messageDiv = document.createElement('div');
         messageDiv.className = `technova-message technova-message-${role}`;
         
@@ -943,11 +964,18 @@
         
         // Sauvegarder dans l'historique
         messages.push({ role, content });
+        
+        console.log('✅ Message ajouté avec succès');
     };
 
     // ⏳ Afficher le loading
     const showLoading = () => {
         const messagesContainer = document.getElementById('technova-messages');
+        if (!messagesContainer) {
+            console.warn('⚠️ Container messages introuvable pour loading');
+            return;
+        }
+        
         const loadingDiv = document.createElement('div');
         loadingDiv.className = 'technova-message technova-message-assistant';
         loadingDiv.id = 'technova-loading-message';
@@ -1052,11 +1080,11 @@
     // 🚀 Envoyer à l'API backend - VERSION OPENWEBUI COMPATIBLE
     const sendToAPI = async (userMessage) => {
         try {
-            // ✅ ENDPOINT OPENWEBUI CORRECT
-            const endpoint = `${config.backendUrl}/v1/chat/completions`;
-            console.log('🔗 Envoi vers OpenWebUI:', endpoint);
+            // ✅ ENDPOINT OPENWEBUI CORRECT VIA BACKEND
+            const endpoint = `${config.backendUrl}/api/chat`;
+            console.log('🔗 Envoi vers Backend → OpenWebUI:', endpoint);
             
-            // 🔄 NOUVEAU : Message système dynamique selon le modèle
+            // 🔄 Message système dynamique selon le modèle
             const systemMessage = currentModelInfo && currentModelInfo.systemMessage 
                 ? currentModelInfo.systemMessage 
                 : `Tu es ${config.model}, un assistant IA. Tu peux aider avec diverses tâches et questions. Réponds de manière utile et précise.`;
@@ -1095,10 +1123,10 @@
                 headers['Authorization'] = `Bearer ${config.apiKey}`;
                 console.log('🔑 Authentification Bearer ajoutée');
             } else {
-                console.log('ℹ️ Pas d\'API key - Connexion sans authentification');
+                console.log('ℹ️ Pas d\'API key - Connexion via backend sécurisé');
             }
             
-            // 🔄 UTILISER LE SYSTÈME DE RETRY AVEC OPENWEBUI
+            // 🔄 UTILISER LE SYSTÈME DE RETRY
             const response = await sendWithRetry(endpoint, {
                 method: 'POST',
                 headers: headers,
@@ -1110,95 +1138,42 @@
             const data = await response.json();
             console.log('✅ Réponse reçue:', data);
             
-            // 🔧 CORRECTION ULTRA-ROBUSTE: Gestion de TOUS les formats de réponse API
+            // 🔧 EXTRACTION ROBUSTE DU MESSAGE
             let assistantMessage = '';
-            
-            // 🔍 DEBUGGING: Afficher la structure complète de la réponse
-            console.log('🔍 Structure COMPLÈTE de data:', {
-                type: typeof data,
-                keys: Object.keys(data || {}),
-                data: data
-            });
             
             // ✅ TENTATIVE 1: Format OpenAI standard
             if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
                 assistantMessage = data.choices[0].message.content;
-                console.log('✅ Format OpenAI détecté - message extrait');
+                console.log('✅ Format OpenAI détecté');
             }
             // ✅ TENTATIVE 2: Format OpenWebUI direct
             else if (data.response) {
                 assistantMessage = data.response;
-                console.log('✅ Format OpenWebUI détecté - response extrait');
+                console.log('✅ Format OpenWebUI détecté');
             }
             // ✅ TENTATIVE 3: Format content direct
             else if (data.content) {
                 assistantMessage = data.content;
-                console.log('✅ Format content détecté - content extrait');
+                console.log('✅ Format content détecté');
             }
             // ✅ TENTATIVE 4: Format message direct
             else if (data.message) {
                 assistantMessage = data.message;
-                console.log('✅ Format message détecté - message extrait');
+                console.log('✅ Format message détecté');
             }
             // ✅ TENTATIVE 5: Si c'est directement un string
             else if (typeof data === 'string' && data.length > 0) {
                 assistantMessage = data;
                 console.log('✅ Format string direct détecté');
             }
-            // ✅ TENTATIVE 6: Chercher dans les propriétés communes d'OpenWebUI
-            else if (data.text) {
-                assistantMessage = data.text;
-                console.log('✅ Format text détecté');
-            }
-            // ✅ TENTATIVE 7: Chercher une propriété qui contient du texte
             else {
-                console.warn('⚠️ Format de réponse API non standard:', data);
-                
-                // Chercher toute propriété qui semble contenir une réponse textuelle
-                const possibleKeys = ['response', 'content', 'message', 'text', 'answer', 'reply', 'output'];
-                let found = false;
-                
-                for (const key of possibleKeys) {
-                    if (data[key] && typeof data[key] === 'string' && data[key].length > 0) {
-                        assistantMessage = data[key];
-                        console.log(`✅ Trouvé réponse dans "${key}":`, assistantMessage.substring(0, 50) + '...');
-                        found = true;
-                        break;
-                    }
-                }
-                
-                // Si toujours rien, essayer de naviguer dans choices[0]
-                if (!found && data.choices && data.choices[0]) {
-                    const choice = data.choices[0];
-                    console.log('🔍 Exploration choice[0]:', choice);
-                    
-                    if (choice.text) {
-                        assistantMessage = choice.text;
-                        console.log('✅ Trouvé dans choices[0].text');
-                        found = true;
-                    } else if (choice.content) {
-                        assistantMessage = choice.content;
-                        console.log('✅ Trouvé dans choices[0].content');
-                        found = true;
-                    } else if (choice.message && choice.message.content) {
-                        assistantMessage = choice.message.content;
-                        console.log('✅ Trouvé dans choices[0].message.content');
-                        found = true;
-                    }
-                }
-                
-                // Dernier recours: afficher un extrait de toute la réponse
-                if (!found) {
-                    console.error('❌ IMPOSSIBLE d\'extraire le message de la réponse API');
-                    console.error('📋 Données reçues complètes:', JSON.stringify(data, null, 2));
-                    assistantMessage = `🔧 Réponse API reçue mais format inattendu. Vérifiez la console pour les détails. Type: ${typeof data}, Clés: ${Object.keys(data || {}).join(', ')}`;
-                }
+                console.error('❌ Format de réponse API non reconnu:', data);
+                assistantMessage = '❌ Réponse reçue mais format inattendu. Vérifiez la console pour les détails.';
             }
             
             // ✅ VERIFICATION FINALE du message
             if (!assistantMessage || assistantMessage.trim() === '') {
                 console.error('❌ Message extrait VIDE!');
-                console.error('📋 Data originale:', data);
                 assistantMessage = '❌ Réponse reçue mais contenu vide. Vérifiez la configuration du modèle.';
             }
             
@@ -1240,26 +1215,25 @@
             hideLoading();
             console.error('❌ Erreur chat finale:', error);
             
-            // 🎯 MESSAGES D'ERREUR SPÉCIFIQUES POUR OPENWEBUI
+            // 🎯 MESSAGES D'ERREUR SPÉCIFIQUES
             let errorMessage = '❌ Désolé, je rencontre des difficultés techniques.';
             
             if (error.message.includes('404')) {
-                errorMessage = `🔍 Endpoint introuvable - Vérifiez que OpenWebUI est bien configuré sur l'URL: ${config.backendUrl}/v1/chat/completions`;
+                errorMessage = `🔍 Service introuvable - Vérifiez la configuration: ${config.backendUrl}`;
             } else if (error.message.includes('401') || error.message.includes('403')) {
-                errorMessage = '🔑 Erreur d\'authentification - Vérifiez votre API key OpenWebUI.';
+                errorMessage = '🔑 Erreur d\'authentification - Vérifiez la configuration.';
             } else if (error.message.includes('500') || error.message.includes('502') || error.message.includes('503')) {
-                errorMessage = '⚙️ Erreur serveur OpenWebUI - Le serveur rencontre un problème temporaire.';
+                errorMessage = '⚙️ Erreur serveur - Le service rencontre un problème temporaire.';
             } else if (error.name === 'AbortError') {
-                errorMessage = '⏰ Timeout - La réponse prend trop de temps. Votre modèle OpenWebUI est peut-être surchargé.';
+                errorMessage = '⏰ Timeout - La réponse prend trop de temps.';
             } else if (error.message.includes('NetworkError') || error.message.includes('fetch')) {
-                errorMessage = '🌐 Impossible de joindre OpenWebUI - Vérifiez que le serveur est démarré et accessible.';
+                errorMessage = '🌐 Impossible de joindre le service - Vérifiez votre connexion.';
             } else if (error.message.includes('CORS')) {
-                errorMessage = '🔒 Erreur CORS - OpenWebUI doit autoriser les requêtes depuis votre domaine.';
+                errorMessage = '🔒 Erreur CORS - Configuration serveur requise.';
             }
             
-            console.log('💡 INFO DE DÉBOGAGE OPENWEBUI:');
+            console.log('💡 INFO DE DÉBOGAGE:');
             console.log(`- URL Backend: ${config.backendUrl}`);
-            console.log(`- Endpoint testé: ${config.backendUrl}/v1/chat/completions`);
             console.log(`- Modèle configuré: ${config.model}`);
             console.log(`- API Key présente: ${config.apiKey ? 'Oui' : 'Non'}`);
             
@@ -1287,16 +1261,41 @@
         }
     };
 
-    // 🚀 DÉMARRAGE WORDPRESS-COMPATIBLE
+    // 🚀 ★★★ DÉMARRAGE NOUVELLE VERSION ★★★
+    const wordPressCompatibleInit = () => {
+        console.log('🔄 Initialisation WordPress-compatible NOUVELLE VERSION...');
+        
+        // Attendre que l'environnement soit minimal
+        let attempts = 0;
+        const maxAttempts = 5; // Réduit pour plus de réactivité
+        
+        const tryInit = () => {
+            attempts++;
+            
+            // Vérifier si l'environnement est minimal pour fonctionner
+            const isMinimallyReady = document.body && !document.getElementById('technova-embed-widget');
+            
+            if (isMinimallyReady || attempts >= maxAttempts) {
+                console.log(`✅ Initialisation après ${attempts} tentatives`);
+                init();
+            } else {
+                console.log(`⏳ Attente environnement (${attempts}/${maxAttempts})...`);
+                setTimeout(tryInit, 100); // Réduit à 100ms
+            }
+        };
+        
+        tryInit();
+    };
+
+    // 🚀 DÉMARRAGE IMMÉDIAT
     if (document.readyState === 'loading') {
         // Document pas encore prêt
         document.addEventListener('DOMContentLoaded', wordPressCompatibleInit);
-        window.addEventListener('load', wordPressCompatibleInit); // Double sécurité
-    } else if (document.readyState === 'interactive') {
-        // DOM prêt mais ressources pas encore chargées
-        setTimeout(wordPressCompatibleInit, 100);
     } else {
-        // Tout est prêt
-        wordPressCompatibleInit();
+        // Document prêt ou en cours - démarrer rapidement
+        setTimeout(wordPressCompatibleInit, 50); // Démarrage très rapide
     }
+
+    console.log('🚀 TechNova Widget Embed REFACTORISÉ chargé - Interface garantie !');
+
 })();
