@@ -51,11 +51,7 @@ Ajoutez dans votre `footer.php` WordPress :
 ├── backend/                          # Backend Node.js sécurisé
 │   ├── server.js                     # Serveur Express
 │   ├── package.json                  # Dépendances
-│   └── .env.example                  # Variables d'environnement
-├── technova-chat-widget-production.js # Widget frontend
-├── technova-config-production.js     # Configuration
-├── demo-technova-production.html     # Page de démonstration
-├── WORDPRESS_INTEGRATION.md          # Guide intégration WordPress
+│   └── .env.example                  # Variables d'environnement          
 └── README.md                         # Ce fichier
 ```
 
@@ -98,16 +94,6 @@ Le backend génère automatiquement la configuration optimale. Personnalisable v
 - ✅ Variables d'environnement protégées
 - ✅ Headers de sécurité
 
-## 📚 **Documentation**
-
-- [Guide d'intégration WordPress](WORDPRESS_INTEGRATION.md)
-- [Notes de sécurisation](notes/SECURISATION_API_KEY_PRODUCTION.md)
-- [Guide de déploiement](notes/GUIDE_DEPLOIEMENT_PRODUCTION.md)
-
-## 🚀 **Démo**
-
-Ouvrez `demo-technova-production.html` pour voir le widget en action.
-
 ## 🔗 **Endpoints Backend**
 
 - `GET /health` - Status du backend
@@ -128,4 +114,4 @@ MIT License - Libre d'utilisation pour vos projets.
 
 ---
 
-**TechNova Chat Widget** - Solution sécurisée pour intégrer un chat IA dans WordPress.
+**Justrent Chat Widget** - Solution sécurisée pour intégrer un chat IA dans WordPress.
