@@ -99,6 +99,7 @@
     const defaultConfig = {
         backendUrl: scriptAttributes.url || 'https://gkwww04kwcwc00gockw8ocw4.jstr.fr',
         model: scriptAttributes.model || 'assistant', // ← Modifié pour éviter confusion
+        apiKey: scriptAttributes.apiKey || currentScript?.getAttribute('data-api-key') || null,
         position: scriptAttributes.position || 'bottom-right', // bottom-right, bottom-left, top-right, top-left
         theme: scriptAttributes.theme || 'blue', // blue, green, purple, orange, red, pink, yellow, dark, teal
         showWelcome: scriptAttributes.showWelcome !== null ? scriptAttributes.showWelcome : true,
@@ -1048,10 +1049,12 @@
         }
     };
 
-    // 🚀 Envoyer à l'API backend - VERSION ROBUSTE
+    // 🚀 Envoyer à l'API backend - VERSION OPENWEBUI COMPATIBLE
     const sendToAPI = async (userMessage) => {
         try {
-            console.log('🔗 Envoi vers:', `${config.backendUrl}/api/chat`);
+            // ✅ ENDPOINT OPENWEBUI CORRECT
+            const endpoint = `${config.backendUrl}/v1/chat/completions`;
+            console.log('🔗 Envoi vers OpenWebUI:', endpoint);
             
             // 🔄 NOUVEAU : Message système dynamique selon le modèle
             const systemMessage = currentModelInfo && currentModelInfo.systemMessage 
@@ -1060,6 +1063,7 @@
             
             console.log('🎯 Message système utilisé:', systemMessage.substring(0, 50) + '...');
             
+            // ✅ FORMAT OPENAI COMPATIBLE POUR OPENWEBUI
             const requestData = {
                 model: config.model,
                 messages: [
@@ -1077,14 +1081,27 @@
                 temperature: 0.7,
                 stream: false
             };
+
+            console.log('📋 Données envoyées:', requestData);
             
-            // 🔄 UTILISER LE SYSTÈME DE RETRY
-            const response = await sendWithRetry(`${config.backendUrl}/api/chat`, {
+            // ✅ HEADERS AVEC AUTHENTIFICATION BEARER SI API KEY DISPONIBLE
+            const headers = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            };
+            
+            // 🔑 AJOUT AUTHENTIFICATION BEARER SI API KEY EXISTE
+            if (config.apiKey) {
+                headers['Authorization'] = `Bearer ${config.apiKey}`;
+                console.log('🔑 Authentification Bearer ajoutée');
+            } else {
+                console.log('ℹ️ Pas d\'API key - Connexion sans authentification');
+            }
+            
+            // 🔄 UTILISER LE SYSTÈME DE RETRY AVEC OPENWEBUI
+            const response = await sendWithRetry(endpoint, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
+                headers: headers,
                 body: JSON.stringify(requestData)
             }, 3);
             
@@ -1223,18 +1240,30 @@
             hideLoading();
             console.error('❌ Erreur chat finale:', error);
             
-            // Messages d'erreur plus spécifiques
+            // 🎯 MESSAGES D'ERREUR SPÉCIFIQUES POUR OPENWEBUI
             let errorMessage = '❌ Désolé, je rencontre des difficultés techniques.';
             
-            if (error.name === 'AbortError') {
-                errorMessage = '⏰ Timeout - La réponse prend trop de temps. Veuillez réessayer.';
+            if (error.message.includes('404')) {
+                errorMessage = `🔍 Endpoint introuvable - Vérifiez que OpenWebUI est bien configuré sur l'URL: ${config.backendUrl}/v1/chat/completions`;
+            } else if (error.message.includes('401') || error.message.includes('403')) {
+                errorMessage = '🔑 Erreur d\'authentification - Vérifiez votre API key OpenWebUI.';
+            } else if (error.message.includes('500') || error.message.includes('502') || error.message.includes('503')) {
+                errorMessage = '⚙️ Erreur serveur OpenWebUI - Le serveur rencontre un problème temporaire.';
+            } else if (error.name === 'AbortError') {
+                errorMessage = '⏰ Timeout - La réponse prend trop de temps. Votre modèle OpenWebUI est peut-être surchargé.';
             } else if (error.message.includes('NetworkError') || error.message.includes('fetch')) {
-                errorMessage = '🌐 Problème de connexion réseau. Vérifiez votre connexion internet.';
+                errorMessage = '🌐 Impossible de joindre OpenWebUI - Vérifiez que le serveur est démarré et accessible.';
             } else if (error.message.includes('CORS')) {
-                errorMessage = '🔒 Problème de sécurité CORS. Contactez le support.';
+                errorMessage = '🔒 Erreur CORS - OpenWebUI doit autoriser les requêtes depuis votre domaine.';
             }
             
-            addMessage('assistant', errorMessage + ' (Code: ' + error.message + ')');
+            console.log('💡 INFO DE DÉBOGAGE OPENWEBUI:');
+            console.log(`- URL Backend: ${config.backendUrl}`);
+            console.log(`- Endpoint testé: ${config.backendUrl}/v1/chat/completions`);
+            console.log(`- Modèle configuré: ${config.model}`);
+            console.log(`- API Key présente: ${config.apiKey ? 'Oui' : 'Non'}`);
+            
+            addMessage('assistant', errorMessage + ' (Détails: ' + error.message + ')');
         }
     };
 
